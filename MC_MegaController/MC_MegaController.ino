@@ -20,7 +20,7 @@ Hardware Hookup:
 // We'll use SoftwareSerial to communicate with the XBee:
 #include <SoftwareSerial.h>
 
-// for RoboClaw
+// .. and Hardware Serial (on the Arduino MEGA) for RoboClaw control
 #include <HardwareSerial.h>
 //Roboclaw Address
 #define address 0x80
@@ -30,26 +30,28 @@ Hardware Hookup:
 
 //#define cmdDelay 150
 
-
+// Digital output for visual indication of Ludicrous mode
 #define BIGLIGHT_PIN 31
+
 
 // *******************************
 // **   Parameters 
 // *******************************
-
-#define SPEED_SETTINGS       3   // number of speed settings
-#define VEL_SLOW           400   // velocity preset
-#define VEL_FAST          1200   // velocity preset
-#define VEL_LUDICROUS    8000   // use this carefully!!!!
-#define RAMP_RATE_SLOW      40   // the ramp rate for motor speed enveloping
-#define RAMP_RATE_FAST      120   // the ramp rate for motor speed enveloping
+#define SPEED_SETTINGS         3   // number of speed settings
+#define VEL_SLOW             400   // velocity preset
+#define VEL_FAST            1200   // velocity preset
+#define VEL_LUDICROUS       8000   // use this carefully!!!!
+#define RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
+#define RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
 #define RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
-#define THR_SLOW            20   // goal threshold
-#define THR_FAST            60   // goal threshold
-#define THR_LUDICROUS       100   // goal threshold
+#define THR_SLOW              20   // goal threshold
+#define THR_FAST              60   // goal threshold
+#define THR_LUDICROUS        100   // goal threshold
 
-#define DIAG_OFFSET_RATE    2
+#define DIAG_OFFSET_RATE       2   // ????
 
+
+// what is this???
 #define DIAG_OFFSET_SLOW          (VEL_SLOW/DIAG_OFFSET_RATE)
 #define DIAG_OFFSET_FAST          (VEL_FAST/DIAG_OFFSET_RATE)
 #define DIAG_OFFSET_LUDICROUS     (VEL_LUDICROUS/DIAG_OFFSET_RATE)
@@ -88,6 +90,7 @@ struct JOYSTICK_CMD {
   bool r1, r2, l1, l2;  // Right1, Right2, Left1, Left2
   bool b1, b2, b3, b4;  // Button1, Button2, Button3, Button4
   bool st, se;          // Start, Select
+  // TODO: add analogs
 };
 
 struct DRIVE_PARAMS {
@@ -99,33 +102,33 @@ struct DRIVE_PARAMS {
 
 // global variables
 // ===================
-//bool megaSpeed = 0;
-//int velocity = FAST_VELOCITY;
+byte drive_mode = SLOW;    // indicates which driving profile is currently used
+bool hillMode = true;      // maintain velocity of 0 (ie: brake if not driving)
 
-byte drive_mode = SLOW;
-bool hillMode = true;
-
-DRIVE_PARAMS param[SPEED_SETTINGS];
-
+DRIVE_PARAMS param[SPEED_SETTINGS];  // LUT for driving parameters
 
 unsigned long last_loop_time = 0;
-JOYSTICK_CMD jscmd;
-unsigned long jscmd_cnt = 0; // count of commands from joystick
+JOYSTICK_CMD jscmd;                  // current joystick command
+unsigned long jscmd_cnt = 0;         // count of commands from joystick
 
 // current and goal speeds for each side
-int cur_spd_lt  = 0;
-int cur_spd_rt  = 0;
-int goal_spd_lt = 0;
-int goal_spd_rt = 0;
+int cur_spd_lt  = 0;                 // curent left motor speed
+int cur_spd_rt  = 0;                 // curent right motor speed
+int goal_spd_lt = 0;                 // left motor goal
+int goal_spd_rt = 0;                 // right motor goal
 
-byte tm1638_keys  = 0;
+byte tm1638_keys  = 0;               // push button inputs from TM1638
 
-bool eStop = false;
+bool eStop = false;                  // emergency stop flag
 
 unsigned int mcL_batt = 250; //0;
 unsigned int mcR_batt = 250; //0;
 
-bool batteryOK = true;
+bool batteryOK = true;               // battery status is OK flag
+
+// delete if not being used....
+//bool megaSpeed = 0;
+//int velocity = FAST_VELOCITY;
 
 
 /* ************************************************************
@@ -147,20 +150,19 @@ void loop() {
 
   if( (cur_time - last_loop_time) >  LOOP_PERIOD_MS) {
     last_loop_time = cur_time;
-
-    // get MC battery levels. If 0, MC is not responding (ie: error)
-    //get_roboclaw_status();
-    
 //    Serial.print("loop time ");
 //    Serial.println(cur_time, DEC);
 
-    // get button states from TM1638
+    // TODO: get MC battery levels. If 0, MC is not responding (ie: error)
+    //get_roboclaw_status();
+    
+    // TODO: get button states from TM1638
     //process_tm1638_keys();
     
     // process JS inputs from XBee
     process_joystick_inputs();
 
-    // process commands from future serial input
+    // TODO: process commands from future serial input
     // TBD....
     
     // If data comes in from serial monitor, send it out to XBee  
@@ -170,7 +172,7 @@ void loop() {
 //      XBee.write(Serial.read());
 //    }
   
-    // set new speed
+    // set new speed based on time and current parameters
     set_new_speed();
 
     Serial.print("goalL: ");
@@ -181,17 +183,15 @@ void loop() {
     Serial.print(cur_spd_lt, DEC);
     Serial.print("   curR: ");
     Serial.print(cur_spd_rt, DEC);
-
-    
 //    Serial.print("battL: ");
 //    Serial.print(mcL_batt, DEC);
 //    Serial.print("   battR: ");
 //    Serial.print(mcR_batt, DEC);
-    
     Serial.print("   jscnt: ");
     Serial.println(jscmd_cnt, DEC);
     
 
+    // set visual indicator for Ludicrous mode
     if(drive_mode == LUDICROUS) {
       digitalWrite(BIGLIGHT_PIN, HIGH);
     }
@@ -199,9 +199,8 @@ void loop() {
       digitalWrite(BIGLIGHT_PIN, LOW);
     }    
   
-    // drive new speed
+    // drive the newly calculated speed
     drive_motors();
-
 
     // update the display status
     refresh_tm1638();
@@ -214,80 +213,3 @@ void loop() {
 } // loop()
 
 
-#if 0    
-void OLD_loop() {
-
-  // If data comes in from serial monitor, send it out to XBee  
-  if (Serial.available()) {
-    Serial.println("sending something...");
-    XBee.write(Serial.read());
-  }
-
-
-  // check for data from XBee link
-  if (XBee.available()) {
-
-    byte input = XBee.read();
-    //Serial.println(input, BIN);
-    XBee.flush();
-    
-    switch(input){
-
-      case 0xA0: // toggle megaSpeed!
-        megaSpeed = !megaSpeed;
-        if(megaSpeed) {
-          velocity = FAST_VELOCITY;
-        }
-        else {
-          velocity = SLOW_VELOCITY;
-        }
-        break;
-      
-      case 0xc0: // xbeeMsg[1]= "1100 0000":
-        Serial.println("Drive Forward");
-        roboclawL.SpeedM1(address,velocity);
-        roboclawL.SpeedM2(address,velocity);
-        roboclawR.SpeedM1(address,velocity);
-        roboclawR.SpeedM2(address,velocity);                        
-        delay(cmdDelay);
-        break;
-      
-      case 0x40: //  xbeeMsg[0]= "0100 0000":
-        Serial.println("Drive Backward");
-        roboclawL.SpeedM1(address,-velocity);
-        roboclawL.SpeedM2(address,-velocity);
-        roboclawR.SpeedM1(address,-velocity);
-        roboclawR.SpeedM2(address,-velocity); 
-        delay(cmdDelay);
-        break;
-
-      case 0x10: // xbeeMsg[1]= "0010 0000":
-        Serial.println("Drive Right");
-        roboclawL.SpeedM1(address,velocity);
-        roboclawL.SpeedM2(address,velocity);
-        roboclawR.SpeedM1(address,-velocity);
-        roboclawR.SpeedM2(address,-velocity);         
-        delay(cmdDelay);
-        break;
-
-      case 0x20: // xbeeMsg[1]= "0010 0000":
-        Serial.println("Drive Left");
-        roboclawL.SpeedM1(address,-velocity);
-        roboclawL.SpeedM2(address,-velocity);
-        roboclawR.SpeedM1(address,velocity);
-        roboclawR.SpeedM2(address,velocity);          
-        delay(cmdDelay);
-        break;        
-        
-      default:
-        roboclawL.BackwardM1(address,0); //Stop Motor1 
-        roboclawL.BackwardM2(address,0); //Stop Motor2 
-        roboclawR.BackwardM1(address,0); //Stop Motor1 
-        roboclawR.BackwardM2(address,0); //Stop Motor2 
-        break;
-    } // switch()
-    
-  } // if (XBee.available())
-  
-} // void loop()
-#endif
