@@ -13,6 +13,21 @@ Hardware Hookup:
   sure the SWITCH IS IN THE "DLINE" POSITION. That will connect
   the XBee's DOUT and DIN pins to Arduino pins 2 and 3.
 
+
+Feature requests...
+- battery level check
+- serial two-way com with PC
+- add analong control with joystick
+- add third MC option? This should be a fork of the code
+- e-stop button
+- bumper sensors
+- timeout check
+- keypad lock code
+- add speakers/audio shield
+- secondary arduino watchdog with kill switch capability
+- (ludicrous) runaway problem fix
+
+
 *****************************************************************/
 //Includes required to use Roboclaw library
 #include "RoboClaw.h"
