@@ -39,14 +39,14 @@ Hardware Hookup:
 // ***** 0 for Life of the Party and 1 for Armando 
 //*******************************
 
-#define ROBOT_ID 30
+#define ROBOT_ID 0
 
 
 // *******************************
 // **   Parameters 
 // *******************************
-#define SPEED_SETTINGS         3   // number of speed settings
-#define VEL_SLOW             400   // velocity preset
+#define ROVER_SPEED_SETTINGS         3   // number of speed settings
+#define ROVER_VEL_SLOW             400   // velocity preset
 #define VEL_FAST            1200   // velocity preset
 #define VEL_LUDICROUS       8000   // use this carefully!!!!
 #define RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
@@ -83,8 +83,11 @@ Hardware Hookup:
 SoftwareSerial XBee(11, 10); // RX, TX (this is confusing and wrong, probably!)
 
 //Setup communcaitions with roboclaw. Use pins 10 and 11 with 10ms timeout
-RoboClaw roboclawL(&Serial2,10000); // 1
-RoboClaw roboclawR(&Serial3,10000); // 2
+//For Rover, claw1 is L, claw2 is right
+//For Arm,
+RoboClaw roboclaw1(&Serial2,10000);
+RoboClaw roboclaw2(&Serial3,10000); // 2
+//RobotClaw roboclaw3(&Serial4, 10000);
 
 // setup TM1638 module
 // pin 48: data         pin 50: clock     pin 52: strobe
