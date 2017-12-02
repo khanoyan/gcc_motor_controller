@@ -23,7 +23,7 @@ if (robotID=0){
     }
 
 
-//check if danger override button is pushed or not
+//check if danger override button is pushed or not!
    if(jscmd.b2) {
   danger_override = true;    //from Mariam: can we make a bool not an if else statment eg. bool dangerOverride = false; (false means button isnt pressed) 
   {
@@ -55,7 +55,7 @@ if (robotID=1){
 
    drive_mode = ARM;
 
-   hillMode= !hillMode
+   hillMode= true;
     // update the goal speeds
     set_goal_speed();
     show_joystick_inputs();
