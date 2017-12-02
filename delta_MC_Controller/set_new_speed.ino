@@ -1,15 +1,15 @@
 /*  
- *   First see what kind of input it is:
- *          1) Arm    robotID = 1
- *          2) Rover  robotID = 0
- *   if arm do "this" code else if rover do "this" code
- *   
- *   dangerOverride = 1 means ignore the "danger"
- *                  = 0 do danger code (see getDanger)
+ *   Inputs: 
+ *    1) goal speed 
+ *    2) drive mode 
+ *    3) current speed
+ *   Output:
+ *    1)Current Speed
+ *  
  */
 
  
-void set_speed()
+void set_new_speed()
 {
   int goal_thr = param[vel_mode].thr;
   int goal_ramp = param[vel_mode].ramp;
