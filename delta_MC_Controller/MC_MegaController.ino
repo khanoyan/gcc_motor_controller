@@ -130,12 +130,12 @@ unsigned long jscmd_cnt = 0;         // count of commands from joystick
 // current and goal speeds for each side
 int rover_cur_spd_lt  = 0;                 // current left motor speed (rover)
 int rover_cur_spd_rt  = 0;                 // current right motor speed (rover)
-int arm_cur_spd_1 = 0;                     // current 1st motor speed (arm)
-int arm_cur_spd_2 = 0;                     // current 2nd motor speed (arm)
-int arm_cur_spd_3 = 0;                     // current 3rd motor speed (arm)
-int arm_cur_spd_4 = 0;                     // current 4th motor speed (arm)
-int arm_cur_spd_5 = 0;                     // current 5th motor speed (arm)
-int arm_cur_spd_6 = 0;                     // current 6th motor speed (arm)
+int arm_cur_spd_m1 = 0;                     // current 1st motor speed (arm)
+int arm_cur_spd_m2 = 0;                     // current 2nd motor speed (arm)
+int arm_cur_spd_m3 = 0;                     // current 3rd motor speed (arm)
+int arm_cur_spd_m4 = 0;                     // current 4th motor speed (arm)
+int arm_cur_spd_m5 = 0;                     // current 5th motor speed (arm)
+int arm_cur_spd_m6 = 0;                     // current 6th motor speed (arm)
 int goal_spd_lt = 0;                 // left motor goal
 int goal_spd_rt = 0;                 // right motor goal
 
