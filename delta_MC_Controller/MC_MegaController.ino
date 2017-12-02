@@ -47,13 +47,14 @@ Hardware Hookup:
 #define ROVER_SPEED_SETTINGS         3   // number of speed settings
 #define ROVER_VEL_SLOW             400   // velocity preset
 #define ROVER_VEL_FAST            1200   // velocity preset
-#define ROVER_VEL_LUDICROUS       8000   // use this carefully!!!!
+#define ARM_VEL             100   // velocity preset FOR ARM
 #define ROVER_RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
+#define ARM_RAMP_RATE       10   // the ramp rate for motor speed enveloping
 #define ROVER_THR_SLOW              20   // goal threshold
 #define ROVER_THR_FAST              60   // goal threshold
-#define ROVER_THR_LUDICROUS        100   // goal threshold
+#define ARM_THR        10   // goal threshold
 #define DIAG_OFFSET_RATE       2   // ????
 
 #define ROBOT_ID 1
@@ -72,11 +73,9 @@ Hardware Hookup:
 // define the name for the drive modes
 #define SLOW      0
 #define FAST      1
-#define LUDICROUS 2
+#define ARM       2
 
-#define LUDICROUS_COMBO_HOLD_COUNT 60 // number of cycles to hold
-                                      // combination to trigger LUD mode
-#define LUDICROUS_DRIVE_TIME 120                                       
+                                      
 
 #define LOOP_PERIOD_MS 20   // 50Hz Loop
 
@@ -128,16 +127,35 @@ JOYSTICK_CMD jscmd;                  // current joystick command
 unsigned long jscmd_cnt = 0;         // count of commands from joystick
 
 // current and goal speeds for each side
+<<<<<<< HEAD
 int rover_cur_spd_lt  = 0;                 // current left motor speed (rover)
 int rover_cur_spd_rt  = 0;                 // current right motor speed (rover)
-int arm_cur_spd_1 = 0;                     // current 1st motor speed (arm)
-int arm_cur_spd_2 = 0;                     // current 2nd motor speed (arm)
-int arm_cur_spd_3 = 0;                     // current 3rd motor speed (arm)
-int arm_cur_spd_4 = 0;                     // current 4th motor speed (arm)
-int arm_cur_spd_5 = 0;                     // current 5th motor speed (arm)
-int arm_cur_spd_6 = 0;                     // current 6th motor speed (arm)
+int arm_cur_spd_m1 = 0;                     // current 1st motor speed (arm)
+int arm_cur_spd_m2 = 0;                     // current 2nd motor speed (arm)
+int arm_cur_spd_m3 = 0;                     // current 3rd motor speed (arm)
+int arm_cur_spd_m4 = 0;                     // current 4th motor speed (arm)
+int arm_cur_spd_m5 = 0;                     // current 5th motor speed (arm)
+int arm_cur_spd_m6 = 0;                     // current 6th motor speed (arm)
 int goal_spd_lt = 0;                 // left motor goal
 int goal_spd_rt = 0;                 // right motor goal
+=======
+int cur_spd_lt  = 0;                 // current left motor speed for Rover
+int cur_spd_rt  = 0;                 // current right motor speed for Rover
+int cur_spd_m1  = 0;                 // current motor1 speed for Arm
+int cur_spd_m2  = 0;                 // current motor2 speed for Arm
+int cur_spd_m3  = 0;                 // current motor3 speed for Arm
+int cur_spd_m4  = 0;                 // current motor4 speed for Arm
+int cur_spd_m5  = 0;                 // current motor5 speed for Arm
+int cur_spd_m6  = 0;                 // current motor6 speed for Arm
+int goal_spd_lt = 0;                 // left motor goal speed for Rover
+int goal_spd_rt = 0;                 // right motor goal speed for Rover 
+int goal_spd_m1 = 0;                 // motor1 goal speed for Arm
+int goal_spd_m2 = 0;                 // motor2 goal speed for Arm
+int goal_spd_m3 = 0;                 // motor3 goal speed for Arm
+int goal_spd_m4 = 0;                 // motor4 goal speed for Arm
+int goal_spd_m5 = 0;                 // motor5 goal speed for Arm
+int goal_spd_m6 = 0;                 // motor6 goal speed for Arm
+>>>>>>> 83afdf180cb0ec9ae7589abe20f2711b706aa929
 
 byte tm1638_keys  = 0;               // push button inputs from TM1638
 
