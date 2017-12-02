@@ -50,7 +50,6 @@ Hardware Hookup:
 #define ARM_VEL             100   // velocity preset FOR ARM
 #define ROVER_RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
-#define ROVER_RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
 #define ARM_RAMP_RATE       10   // the ramp rate for motor speed enveloping
 #define ROVER_THR_SLOW              20   // goal threshold
 #define ROVER_THR_FAST              60   // goal threshold
@@ -68,7 +67,7 @@ Hardware Hookup:
 // what is this???
 #define DIAG_OFFSET_SLOW          (VEL_SLOW/DIAG_OFFSET_RATE)
 #define DIAG_OFFSET_FAST          (VEL_FAST/DIAG_OFFSET_RATE)
-#define DIAG_OFFSET_LUDICROUS     (VEL_LUDICROUS/DIAG_OFFSET_RATE)
+
 
 // define the name for the drive modes
 #define SLOW      0
@@ -128,17 +127,7 @@ unsigned long jscmd_cnt = 0;         // count of commands from joystick
 
 // current and goal speeds for each side
 <<<<<<< HEAD
-int rover_cur_spd_lt  = 0;                 // current left motor speed (rover)
-int rover_cur_spd_rt  = 0;                 // current right motor speed (rover)
-int arm_cur_spd_m1 = 0;                     // current 1st motor speed (arm)
-int arm_cur_spd_m2 = 0;                     // current 2nd motor speed (arm)
-int arm_cur_spd_m3 = 0;                     // current 3rd motor speed (arm)
-int arm_cur_spd_m4 = 0;                     // current 4th motor speed (arm)
-int arm_cur_spd_m5 = 0;                     // current 5th motor speed (arm)
-int arm_cur_spd_m6 = 0;                     // current 6th motor speed (arm)
-int goal_spd_lt = 0;                 // left motor goal
-int goal_spd_rt = 0;                 // right motor goal
-=======
+
 int cur_spd_lt  = 0;                 // current left motor speed for Rover
 int cur_spd_rt  = 0;                 // current right motor speed for Rover
 int cur_spd_m1  = 0;                 // current motor1 speed for Arm
@@ -229,16 +218,8 @@ void loop() {
 //    Serial.print(mcR_batt, DEC);
     Serial.print("   jscnt: ");
     Serial.println(jscmd_cnt, DEC);
-    
-
-    // set visual indicator for Ludicrous mode
-    if(drive_mode == LUDICROUS) {
-      digitalWrite(BIGLIGHT_PIN, HIGH);
-    }
-    else {
-      digitalWrite(BIGLIGHT_PIN, LOW);
-    }    
   
+
     // drive the newly calculated speed
     drive_motors();
 
