@@ -68,11 +68,11 @@ void get_roboclaw_status() {
 
 if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
     if(arm_cur_spd_1 != 0 || arm_cur_spd_2 != 0 || arm_cur_spd_3 != 0 || arm_cur_spd_4 != 0 || arm_cur_spd_5 != 0 || arm_cur_spd_6 != 0) {
-      RoboClaw1.SpeedM1(address,arm_cur_spd_1);
-      RoboCLaw1.SpeedM2(address,arm_cur_spd_2);
-      RoboClaw2.SpeedM3(address,arm_cur_spd_3);
-      RoboClaw2.SpeedM4(address,arm_cur_spd_4); 
-      RoboClaw3.SpeedM5(address,arm_cur_spd_5);
-      RoboClaw3.SpeedM6(address,arm_cur_spd_6);
+      roboclaw1.SpeedM1(address,arm_cur_spd_1);
+      robocLaw1.SpeedM2(address,arm_cur_spd_2);
+      roboclaw2.SpeedM3(address,arm_cur_spd_3);
+      roboclaw2.SpeedM4(address,arm_cur_spd_4); 
+      roboclaw3.SpeedM5(address,arm_cur_spd_5);
+      roboclaw3.SpeedM6(address,arm_cur_spd_6);
     }   // drive_motors (1)
   } 
