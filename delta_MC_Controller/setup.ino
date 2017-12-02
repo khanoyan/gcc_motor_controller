@@ -5,9 +5,10 @@ void setup() {
   XBee.begin(9600);
   Serial.begin(57600);
 
+
   //Open roboclaw serial ports
-  roboclawL.begin(38400);
-  roboclawR.begin(38400);
+  roboclaw1.begin(38400);
+  roboclaw2.begin(38400);
 
   jscmd.linkActive = true; // override this value until we check for it
   jscmd.up = false;
@@ -51,5 +52,18 @@ void setup() {
   pinMode(BIGLIGHT_PIN, OUTPUT);
   // flush XBee serial stream before we get into loop()
   XBee.flush();
+
+  int XBEE_COUNT = 0;
+
+  while(XBee.avaiable()<1 && XBEE_COUNT < 6){
+    delay(1000);
+    count++;
+  }
+  if(XBee.avaiable()){
+    XBEE_ON = true;
+  }
+  else{
+    XBEE_OFF = false;
+  }
       
 } // setup()

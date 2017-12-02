@@ -14,16 +14,17 @@ Hardware Hookup:
   the XBee's DOUT and DIN pins to Arduino pins 2 and 3.
 
 *****************************************************************/
+
+
+// **************************************************************
+//     LIBRARIES
+// **************************************************************
+
 //Includes required to use Roboclaw library
 #include "RoboClaw.h"
 
 // We'll use SoftwareSerial to communicate with the XBee:
 #include <SoftwareSerial.h>
-
-// .. and Hardware Serial (on the Arduino MEGA) for RoboClaw control
-#include <HardwareSerial.h>
-//Roboclaw Address
-#define address 0x80
 
 // for TM1638 display unit
 #include <TM1638.h>
@@ -33,70 +34,81 @@ Hardware Hookup:
 // Digital output for visual indication of Ludicrous mode
 #define BIGLIGHT_PIN 31
 
-// ******************************
-// ***** Robot ID *****
-// ***** Defines which robot the software is on. 
-// ***** 0 for Life of the Party and 1 for Armando 
-//*******************************
-
-#define ROBOT_ID 0
 
 // *******************************
 // **   Parameters 
 // *******************************
-#define ROVER_SPEED_SETTINGS         3   // number of speed settings
+
+// MODE SECTION
+
+#define MODE_ARM 1
+#define MODE_ROVER 2
+
+// SPEED SECTION
+
 #define ROVER_VEL_SLOW             400   // velocity preset
 #define ROVER_VEL_FAST            1200   // velocity preset
-#define ARM_VEL             100   // velocity preset FOR ARM
 #define ROVER_RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
-#define ARM_RAMP_RATE       10   // the ramp rate for motor speed enveloping
 #define ROVER_THR_SLOW              20   // goal threshold
 #define ROVER_THR_FAST              60   // goal threshold
-#define ARM_THR        10   // goal threshold
-#define DIAG_OFFSET_RATE       2   // ????
 
-#define ROBOT_ID 1
-
-// *******************************
-// **   Parameters 
-// *******************************
 #define ARM_SPEED_SETTINGS           1    // number of speed settings
-#define ARM_VELOCITY_MOVE          200    // velocity preset
+#define ARM_VEL                    100   // velocity preset FOR ARM
+#define ARM_RAMP_RATE               10   // the ramp rate for motor speed enveloping
+#define ARM_THR                     10   // goal threshold
 
-// what is this???
+//#define ROVER_SPEED_SETTINGS         2   // number of speed settings
+
+#define DIAG_OFFSET_RATE       2   // ????
 #define DIAG_OFFSET_SLOW          (VEL_SLOW/DIAG_OFFSET_RATE)
 #define DIAG_OFFSET_FAST          (VEL_FAST/DIAG_OFFSET_RATE)
-
 
 // define the name for the drive modes
 #define SLOW      0
 #define FAST      1
 #define ARM       2
 
-                                      
-
 #define LOOP_PERIOD_MS 20   // 50Hz Loop
 
-
+// ***********************
+//       XBEE
+// ***********************
 // XBee's DOUT (TX) is connected to pin 2 (Arduino's Software RX)
 // XBee's DIN (RX) is connected to pin 3 (Arduino's Software TX)
 // on xbee shield, place jumper on XB_TX_11 and DIGITAL, and
 // XB_RX_10 and DIGITAL
 SoftwareSerial XBee(11, 10); // RX, TX (this is confusing and wrong, probably!)
+bool XBEE_ON;
+
+// ************************
+//        ROBOCLAW
+// ************************
 
 //Setup communcaitions with roboclaw. Use pins 10 and 11 with 10ms timeout
 //For Rover, claw1 is L, claw2 is right
 //For Arm,
+
+// .. and Hardware Serial (on the Arduino MEGA) for RoboClaw control
+#include <HardwareSerial.h>
+//Roboclaw Address
+#define address 0x80
+
 RoboClaw roboclaw1(&Serial2,10000);
 RoboClaw roboclaw2(&Serial3,10000); // 2
-//RobotClaw roboclaw3(&Serial4, 10000);
+//RobotClaw roboclaw3(&Serial1, 10000);
 
+
+
+// ************************
 // setup TM1638 module
+// ************************
 // pin 48: data         pin 50: clock     pin 52: strobe
 TM1638 tm1638(48, 50, 52);
 
-
+// ************************
+//        STRUCTS
+// ************************
 
 struct JOYSTICK_CMD {
   bool linkActive;      // is the JS link active?
@@ -114,8 +126,18 @@ struct DRIVE_PARAMS {
   int diag;
 };
 
-// global variables
-// ===================
+struct COMMAND_FROM_THING_TO_MC{
+  int direction;
+  int motor_nu;
+  int duration;
+};
+
+// ************************
+//      GLOBAL VARIABLES
+// ************************
+
+int mode = MODE_ROVER
+
 byte drive_mode = SLOW;    // indicates which driving profile is currently used
 bool hillMode = true;      // maintain velocity of 0 (ie: brake if not driving)
 
@@ -145,7 +167,6 @@ int goal_spd_m4 = 0;                 // motor4 goal speed for Arm
 int goal_spd_m5 = 0;                 // motor5 goal speed for Arm
 int goal_spd_m6 = 0;                 // motor6 goal speed for Arm
 
-
 byte tm1638_keys  = 0;               // push button inputs from TM1638
 
 bool eStop = false;                  // emergency stop flag
@@ -159,6 +180,37 @@ bool batteryOK = true;               // battery status is OK flag
 //bool megaSpeed = 0;
 //int velocity = FAST_VELOCITY;
 
+// ************************
+//    DANGER
+// ************************
+
+bool dangerFront = 0;
+bool dangerBack = 0;
+
+bool dangerM1 = 0;
+bool dangerM2 = 0;
+bool dangerM3 = 0;
+bool dangerM4 = 0;
+bool dangerM5 = 0;
+bool dangerM6 = 0;
+
+bool FrontRight = 0;
+bool FrontLeft = 0;
+bool BackRight = 0;
+bool BackLeft = 0;
+
+bool dangerOverride=0;
+
+// ************************
+//       TELEMETRY
+// ************************
+
+uint16_t currentM1 =0;
+uint16_t currentM2 =0;
+uint16_t currentM3 =0;
+uint16_t currentM4 =0;
+uint16_t currentM5 =0;
+uint16_t currentM6 =0;
 
 /* ************************************************************
  *  Main Loop
