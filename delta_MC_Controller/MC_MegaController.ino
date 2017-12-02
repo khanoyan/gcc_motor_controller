@@ -126,7 +126,7 @@ JOYSTICK_CMD jscmd;                  // current joystick command
 unsigned long jscmd_cnt = 0;         // count of commands from joystick
 
 // current and goal speeds for each side
-<<<<<<< HEAD
+
 
 int cur_spd_lt  = 0;                 // current left motor speed for Rover
 int cur_spd_rt  = 0;                 // current right motor speed for Rover
@@ -144,7 +144,7 @@ int goal_spd_m3 = 0;                 // motor3 goal speed for Arm
 int goal_spd_m4 = 0;                 // motor4 goal speed for Arm
 int goal_spd_m5 = 0;                 // motor5 goal speed for Arm
 int goal_spd_m6 = 0;                 // motor6 goal speed for Arm
->>>>>>> 83afdf180cb0ec9ae7589abe20f2711b706aa929
+
 
 byte tm1638_keys  = 0;               // push button inputs from TM1638
 
