@@ -34,10 +34,10 @@ void setup() {
   param[FAST].ramp      = RAMP_RATE_FAST;
   param[FAST].thr       = THR_FAST;
   param[FAST].diag      = DIAG_OFFSET_FAST;  
-  param[LUDICROUS].vel  = VEL_LUDICROUS;
-  param[LUDICROUS].ramp = RAMP_RATE_LUDICROUS;
-  param[LUDICROUS].thr  = THR_LUDICROUS;
-  param[LUDICROUS].diag = DIAG_OFFSET_LUDICROUS;  
+  param[ARM].vel        = ARM_VEL;
+  param[ARM].ramp       = ARM_RAMP_RATE;
+  param[ARM].thr        = ARM_THR;
+   
 
   // connect to TM1638 module
   // display a hexadecimal number and set the left 4 dots

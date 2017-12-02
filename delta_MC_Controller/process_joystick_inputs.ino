@@ -2,28 +2,44 @@
 // populate the jscmd struct
 //
 
+
 void process_joystick_inputs() {
+//****Rover Mode**************************************************
+if (robotID=0){
+//rover if robotID=0 
 
   static bool last_b4 = false;  // last state of B4 button
 
-  static int lud_hold_count = 0;
-  static int lud_drive_timer = 0; 
-  
-  // read from XBee stream. parse and update jscmd struct
+
+ // read from XBee stream. parse and update jscmd struct
   byte bytes_to_read = XBee.available();
+  //********************************************dear figure out the XBEE stuff please**********************
   if(bytes_to_read >= 2) {
-    
+
+   
     for(byte i = 0; i< bytes_to_read; i++) {
       parse_xbee_byte();
       jscmd_cnt++;
     }
 
-    // check if R2 is pressed so that we switch to FAST
-    // FAST mode is a momentary switch
-    if(drive_mode != LUDICROUS) {
-      if(jscmd.r2) {  drive_mode = FAST;   }
-      else         {  drive_mode = SLOW;   }
+
+//check if danger override button is pushed or not!
+   if(jscmd.b2) {
+  danger_override = true;    
+  {
+    else {
+      danger_override = false;
     }
+    }
+  }
+
+
+//set the drive mode slow of fast
+if(jscmd.r2) {
+  drive_mode = FAST; }
+  else {
+    drive_mode = SLOW;
+  }
 
     // check if button 4 state has changed...
     // b4 tells us to toggle the hold mode
@@ -31,42 +47,21 @@ void process_joystick_inputs() {
     if(!last_b4 && cur_b4) {
       hillMode = !hillMode;
     }
-    last_b4 = cur_b4;
+    last_b4 = cur_b4; // set lastmode and current mode equal
 
-    // detect proper key combo to enter LUDICROUS mode
-    if(jscmd.b3 && jscmd.l2 && jscmd.r1) {
-      lud_hold_count++;
-    }
-    else {
-      lud_hold_count = 0;
-    }
-    if(lud_hold_count >= LUDICROUS_COMBO_HOLD_COUNT) {
-      drive_mode = LUDICROUS;
-      param[LUDICROUS].vel = VEL_LUDICROUS;
-      lud_drive_timer = LUDICROUS_DRIVE_TIME;
-      lud_hold_count = 0;
-    }
+//*****for arm ***************************************************
+if (robotID=1){
+  //if robotID=1 then arm mode
 
-    // if in LUDICROUS mode, stop after TBD seconds
-    if(drive_mode == LUDICROUS) {
-      lud_drive_timer--;
+   drive_mode = ARM;
 
-      if(lud_drive_timer < 8) {
-        param[LUDICROUS].vel -= RAMP_RATE_LUDICROUS;
-      }
-      
-      if(lud_drive_timer == 0) {
-        drive_mode = SLOW;
-//        cur_spd_lt = param[SLOW].vel;
-//        cur_spd_rt = param[SLOW].vel;        
-      }
-    }
-    
+   hillMode= true;
     // update the goal speeds
     set_goal_speed();
     show_joystick_inputs();
+   }
   }
-
+  
   // also check if this link is alive... if TBD millis have gone
   // since last msg, notify main program
 
@@ -75,9 +70,15 @@ void process_joystick_inputs() {
 } // process_joystick_inputs()
 
 
-
+//*****Start of setting goal speeds******************************
 // set our goal speeds based on the joystick inputs
-void set_goal_speed() {
+void set_goal_speed() { 
+
+  //****Rover Mode**************************************************
+  
+if (robotID=0){
+//rover if robotID=0
+
   if(jscmd.up && jscmd.lt) {
     goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
     goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
@@ -115,52 +116,77 @@ void set_goal_speed() {
     goal_spd_rt = 0;     
   }
   
- 
+}
+
+//*****for arm ***************************************************
+if (robotID=1){
+  //if robotID=1 then arm mode
+
+//GRIP:!!!!!!!!!!!!!!!!!!
+// Grip open 
+if(jscmd.b1) {
+goal_spd_M6 = param[drive_mode].vel;
+}
+
+// Grip close
+if(jscmd.b3) {
+goal_spd_M6 = -param[drive_mode].vel;
+}
+//WRIST:
+// Wrist right
+if(jscmd.rt) {
+goal_spd_M4 = param[drive_mode].vel;
+goal_spd_M5 = param[drive_mode].vel;
+}
+// Wrist left
+if(jscmd.lt) {
+goal_spd_M4 = -param[drive_mode].vel;
+goal_spd_M5 = -param[drive_mode].vel;
+}
+//Wrist up
+if(jscmd.up) {
+goal_spd_M4 = -param[drive_mode].vel;
+goal_spd_M5 = param[drive_mode].vel;
+}
+//Wrist down
+if(jscmd.dn) {
+goal_spd_M4 = param[drive_mode].vel;
+goal_spd_M5 = -param[drive_mode].vel;
+}
+
+//ELBOW:
+//Elbow up
+if(jscmd.L1) {
+goal_spd_M3 = -param[drive_mode].vel;
+}
+//Elbow down
+if(jscmd.L2) {
+goal_spd_M3 = param[drive_mode].vel;
+}
+
+//SHOULDER:
+//Shoulder up
+if(jscmd.R1) {
+goal_spd_M2 = param[drive_mode].vel;
+}
+//Shoulder down
+if(jscmd.R2) {
+goal_spd_M2 = -param[drive_mode].vel;
+}
+
+//BASE:
+//Base left
+if(jscmd.b2) {
+goal_spd_M1 = -param[drive_mode].vel;
+}
+//Base right
+if(jscmd.b4) {
+goal_spd_M1 = param[drive_mode].vel;
+  }
+ }
 } // set_goal_speed()
 
-// set our goal speeds based on the joystick inputs
-void set_goal_speed_working() {
-  if(jscmd.up && jscmd.lt) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
-  }
-  else if(jscmd.up && jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
-    goal_spd_rt = param[drive_mode].vel;    
-  }
-  else if(jscmd.dn && jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
-  }
-  else if(jscmd.dn && jscmd.rt) {
-    goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
-    goal_spd_rt = -param[drive_mode].vel;    
-  }  
-  else if(jscmd.up) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;
-  }
-  else if(jscmd.dn) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;
-  }
-  else if(jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;    
-  }
-  else if(jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;    
-  }
-  else {
-    goal_spd_lt = 0;
-    goal_spd_rt = 0;     
-  }
-  
- 
-} // set_goal_speed()
-
-
+//*****end of setting goal speeds******************************
 // debug code for showing joystick inputs
 void show_joystick_inputs() {
   if(jscmd.up) Serial.print("UP ");
@@ -211,4 +237,3 @@ void parse_xbee_byte() {
     jscmd.dn = (xb & B01000000);    
   }
 } // parse_xbee_byte()
-
