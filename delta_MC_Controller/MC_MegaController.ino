@@ -39,25 +39,30 @@ Hardware Hookup:
 // ***** 0 for Life of the Party and 1 for Armando 
 //*******************************
 
-#define ROBOT_ID 30
-
+#define ROBOT_ID 0
 
 // *******************************
 // **   Parameters 
 // *******************************
-#define SPEED_SETTINGS         3   // number of speed settings
-#define VEL_SLOW             400   // velocity preset
-#define VEL_FAST            1200   // velocity preset
-#define VEL_LUDICROUS       8000   // use this carefully!!!!
-#define RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
-#define RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
-#define RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
-#define THR_SLOW              20   // goal threshold
-#define THR_FAST              60   // goal threshold
-#define THR_LUDICROUS        100   // goal threshold
-
+#define ROVER_SPEED_SETTINGS         3   // number of speed settings
+#define ROVER_VEL_SLOW             400   // velocity preset
+#define ROVER_VEL_FAST            1200   // velocity preset
+#define ROVER_VEL_LUDICROUS       8000   // use this carefully!!!!
+#define ROVER_RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
+#define ROVER_RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
+#define ROVER_RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
+#define ROVER_THR_SLOW              20   // goal threshold
+#define ROVER_THR_FAST              60   // goal threshold
+#define ROVER_THR_LUDICROUS        100   // goal threshold
 #define DIAG_OFFSET_RATE       2   // ????
 
+#define ROBOT_ID 1
+
+// *******************************
+// **   Parameters 
+// *******************************
+#define ARM_SPEED_SETTINGS           1    // number of speed settings
+#define ARM_VELOCITY_MOVE          200    // velocity preset
 
 // what is this???
 #define DIAG_OFFSET_SLOW          (VEL_SLOW/DIAG_OFFSET_RATE)
@@ -83,8 +88,11 @@ Hardware Hookup:
 SoftwareSerial XBee(11, 10); // RX, TX (this is confusing and wrong, probably!)
 
 //Setup communcaitions with roboclaw. Use pins 10 and 11 with 10ms timeout
-RoboClaw roboclawL(&Serial2,10000); // 1
-RoboClaw roboclawR(&Serial3,10000); // 2
+//For Rover, claw1 is L, claw2 is right
+//For Arm,
+RoboClaw roboclaw1(&Serial2,10000);
+RoboClaw roboclaw2(&Serial3,10000); // 2
+//RobotClaw roboclaw3(&Serial4, 10000);
 
 // setup TM1638 module
 // pin 48: data         pin 50: clock     pin 52: strobe
@@ -120,8 +128,14 @@ JOYSTICK_CMD jscmd;                  // current joystick command
 unsigned long jscmd_cnt = 0;         // count of commands from joystick
 
 // current and goal speeds for each side
-int cur_spd_lt  = 0;                 // curent left motor speed
-int cur_spd_rt  = 0;                 // curent right motor speed
+int rover_cur_spd_lt  = 0;                 // current left motor speed (rover)
+int rover_cur_spd_rt  = 0;                 // current right motor speed (rover)
+int arm_cur_spd_1 = 0;                     // current 1st motor speed (arm)
+int arm_cur_spd_2 = 0;                     // current 2nd motor speed (arm)
+int arm_cur_spd_3 = 0;                     // current 3rd motor speed (arm)
+int arm_cur_spd_4 = 0;                     // current 4th motor speed (arm)
+int arm_cur_spd_5 = 0;                     // current 5th motor speed (arm)
+int arm_cur_spd_6 = 0;                     // current 6th motor speed (arm)
 int goal_spd_lt = 0;                 // left motor goal
 int goal_spd_rt = 0;                 // right motor goal
 
