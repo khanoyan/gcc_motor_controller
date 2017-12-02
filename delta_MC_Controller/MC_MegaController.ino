@@ -47,11 +47,11 @@ Hardware Hookup:
 #define ROVER_SPEED_SETTINGS         3   // number of speed settings
 #define ROVER_VEL_SLOW             400   // velocity preset
 #define ROVER_VEL_FAST            1200   // velocity preset
-#define VEL_ARM             100   // velocity preset FOR ARM
+#define ARM_VEL             100   // velocity preset FOR ARM
 #define ROVER_RAMP_RATE_SLOW        40   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_FAST       120   // the ramp rate for motor speed enveloping
 #define ROVER_RAMP_RATE_LUDICROUS 1000   // the ramp rate for motor speed enveloping
-#define RAMP_RATE_ARM        10   // the ramp rate for motor speed enveloping
+#define ARM_RAMP_RATE       10   // the ramp rate for motor speed enveloping
 #define ROVER_THR_SLOW              20   // goal threshold
 #define ROVER_THR_FAST              60   // goal threshold
 #define ARM_THR        10   // goal threshold
