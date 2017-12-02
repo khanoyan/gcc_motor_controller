@@ -1,11 +1,15 @@
 // drive with velocity command
 void drive_motors() {
+    
+    //Code By Avery
+
+    //Identify if it is ROVER (0) or ARM (1)
 
   if (ROBOT_ID==0) {
 
   if(batteryOK && mcL_batt>1 && mcR_batt>1) {  // IF ALL OK... 
     if(cur_spd_lt != 0 || cur_spd_rt != 0) {
-      roboclaw1.SpeedM1(address,rover_cur_spd_lt);
+      roboclaw1.SpeedM1(address,rover_cur_spd_lt);  
       roboclaw1.SpeedM2(address,rover_cur_spd_lt);
       roboclaw2.SpeedM1(address,rover_cur_spd_rt);
       roboclaw2.SpeedM2(address,rover_cur_spd_rt); 
@@ -33,7 +37,7 @@ void drive_motors() {
     roboclaw2.BackwardM1(address,0); //Stop Motor1 
     roboclaw2.BackwardM2(address,0); //Stop Motor2      
   }
-} // drive_motors()
+} // drive_motors(0)
 
 
 // get roboclaw's battery levels
@@ -62,13 +66,13 @@ void get_roboclaw_status() {
 
   else if (ROBOT_ID==1) {
 
-if(batteryOK && mcL_batt>1 && mcR_batt>1) {  // IF ALL OK... 
-    if(cur_spd_lt != 0 || cur_spd_rt != 0) {
+if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
+    if(arm_cur_spd_1 != 0 || arm_cur_spd_2 != 0 || arm_cur_spd_3 != 0 || arm_cur_spd_4 != 0 || arm_cur_spd_5 != 0 || arm_cur_spd_6 != 0) {
       RoboClaw1.SpeedM1(address,arm_cur_spd_1);
       RoboCLaw1.SpeedM2(address,arm_cur_spd_2);
       RoboClaw2.SpeedM3(address,arm_cur_spd_3);
       RoboClaw2.SpeedM4(address,arm_cur_spd_4); 
       RoboClaw3.SpeedM5(address,arm_cur_spd_5);
       RoboClaw3.SpeedM6(address,arm_cur_spd_6);
-    }
-  }
+    }   // drive_motors (1)
+  } 
