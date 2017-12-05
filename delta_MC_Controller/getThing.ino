@@ -1,11 +1,13 @@
-COMMAND_FROM_THING_TO_MC CMDS_TO_MC;
+
+
+// CONFIRM WHAT NUMBERS ARE ENDING AND HEADER INITIALIZE COMMAND_FROM_THING_TO_MC
 
 bool getThing(){
 
   if (XBEE_ON == true){
     return false;
     }
-    
+
   else if(XBEE_ON == false){
 
     byte cmndRoverArr[3];
