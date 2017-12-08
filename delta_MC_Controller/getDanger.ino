@@ -90,8 +90,14 @@ void loop() {
   }
   else if( mode = MODE_ARM){
 
-      for(int i; i<50; i++){
-
+    int counter = 0;
+      
+    if( counter = 50){
+      
+     roboclaw1.ReadCurrents(address, &currentM1, &currentM2);
+     roboclaw2.ReadCurrents(address, &currentM3, &currentM4);
+     roboclaw3.ReadCurrents(address, &currentM5, &currentM6);
+      
         if(currentM1 > M1_thresh){
           dangerM1 = true;
         }
@@ -115,14 +121,11 @@ void loop() {
         else if(currentM6 > M6_thresh){
           dangerM6 = true;
         }
-
-        if(i = 50){
-          roboclaw1.ReadCurrents(address, &currentM1, &currentM2);
-          roboclaw2.ReadCurrents(address, &currentM3, &currentM4);
-          roboclaw3.ReadCurrents(address, &currentM5, &currentM6);
-          i = 0;
-        }
-      }
+    }
+ 
+    counter++;        
+        
+      
     }
   }
 }
