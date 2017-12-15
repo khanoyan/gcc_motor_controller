@@ -12,12 +12,11 @@
  */
 
  
-void set_new_speed()
-{
+void set_new_speed(){
   int goal_thr = param[vel_mode].thr;
   int goal_ramp = param[vel_mode].ramp;
 
-if(eStop) { 
+  if(eStop) { 
     goal_spd_lt = 0;
     goal_spd_rt = 0;
     cur_spd_lt = 0;
@@ -39,67 +38,56 @@ if(eStop) {
   }
 
   else {
-
- //************************Rover Mode with joystick *******************************
-   if(xBee = 0){
+  //************************Rover Mode with joystick *******************************
+    if(xBee = 0){
     
-    if (mode == MODE_ROVER){
-     if( !( (goal_spd_lt-goal_thr < cur_spd_lt) && 
-           (goal_spd_lt+goal_thr > cur_spd_lt) ) ) {  
-
-        if(cur_spd_lt < goal_spd_lt) {
-           cur_spd_lt += goal_ramp;
-           }
+      if (mode == MODE_ROVER){
+        if( !( (goal_spd_lt-goal_thr < cur_spd_lt) && (goal_spd_lt+goal_thr > cur_spd_lt) ) ) {  
+          if(cur_spd_lt < goal_spd_lt) {
+            cur_spd_lt += goal_ramp;
+          }
         else {
           cur_spd_lt -= goal_ramp;
-          }
-     }
-
-      if( !( (goal_spd_rt-goal_thr < cur_spd_rt) && 
-           (goal_spd_rt+goal_thr > cur_spd_rt) ) ) { 
-
-    if(cur_spd_rt < goal_spd_rt) {
-              cur_spd_rt += goal_ramp;
-           }
-           else {
-                cur_spd_rt -= goal_ramp;
-           }      
-         }
+        }
       }
+
+      if( !( (goal_spd_rt-goal_thr < cur_spd_rt) && (goal_spd_rt+goal_thr > cur_spd_rt) ) ) { 
+        if(cur_spd_rt < goal_spd_rt) {
+              cur_spd_rt += goal_ramp;
+        }
+        else {
+          cur_spd_rt -= goal_ramp;
+        }      
+      }
+    }
      
 
 
-// ********************* Arm Mode with joystick**********************
-  else if (mode == MODE_ARM)
-  {       
- 
-  if ( ! ( (goal_spd_m1-goal_thr < cur_spd_m1)  && 
-            (goal_spd_m1+goal_thr > cur_spd_m1) )  )       // if speed is not within range 
-    {  
-          if (cur_spd_m1 < goal_spd_m1)
-          {
-             cur_spd_m1 += goal_ramp;      // increase speed
-           }
-              else 
-              {  
-                cur_spd_m1 -= goal_ramp;     //decrease speed
-              }
-     }
-    if ( ! ( (goal_spd_m2-goal_thr < cur_spd_m2)  && 
-        (goal_spd_m2 + goal_thr > cur_spd_m2) ) )       // Motor 2
-     {  
+    // ********************* Arm Mode with joystick**********************
+    else if (mode == MODE_ARM){
+      if ( ! ( (goal_spd_m1-goal_thr < cur_spd_m1)  &&  (goal_spd_m1+goal_thr > cur_spd_m1) )  )       // if speed is not within range 
+      {  
+        if (cur_spd_m1 < goal_spd_m1){
+          cur_spd_m1 += goal_ramp;      // increase speed
+        }
+        else 
+        {  
+          cur_spd_m1 -= goal_ramp;     //decrease speed
+        }
+      }
+      if ( ! ( (goal_spd_m2-goal_thr < cur_spd_m2)  && (goal_spd_m2 + goal_thr > cur_spd_m2) ) )       // Motor 2
+      {  
         if (cur_spd_m2 < goal_spd_m2)
         {
             cur_spd_m2 += goal_ramp;
         }
-          else
-          {  
-            cur_spd_m2 -= goal_ramp;
-          }
+        else
+        {  
+          cur_spd_m2 -= goal_ramp;
+        }
       }
     
-    if ( ! ( (goal_spd_m3-goal_thr < cur_spd_m3)  && 
-      (goal_spd_m3 + goal_thr > cur_spd_m3) ) )       // Motor 3
+      if ( ! ( (goal_spd_m3-goal_thr < cur_spd_m3)  && (goal_spd_m3 + goal_thr > cur_spd_m3) ) )       // Motor 3
      {  
            if (cur_spd_m3 < goal_spd_m3)
            {

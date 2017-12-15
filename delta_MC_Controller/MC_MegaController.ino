@@ -229,6 +229,7 @@ uint16_t currentM6 =0;
      - set new motor speed
      - update TM1638 display
   *************************************************************/
+  
 void loop() {
 
   // get current time in millis
@@ -273,10 +274,10 @@ void loop() {
     
     // If data comes in from serial monitor, send it out to XBee  
     // this is our debug route
-//    if (Serial.available()) {
-//      Serial.println("sending something...");
-//      XBee.write(Serial.read());
-//    }
+    //    if (Serial.available()) {
+    //      Serial.println("sending something...");
+    //      XBee.write(Serial.read());
+    //    }
   
     // set new speed based on time and current parameters
     set_new_speed();
@@ -289,10 +290,10 @@ void loop() {
     Serial.print(cur_spd_lt, DEC);
     Serial.print("   curR: ");
     Serial.print(cur_spd_rt, DEC);
-//    Serial.print("battL: ");
-//    Serial.print(mcL_batt, DEC);
-//    Serial.print("   battR: ");
-//    Serial.print(mcR_batt, DEC);
+    //    Serial.print("battL: ");
+    //    Serial.print(mcL_batt, DEC);
+    //    Serial.print("   battR: ");
+    //    Serial.print(mcR_batt, DEC);
     Serial.print("   jscnt: ");
     Serial.println(jscmd_cnt, DEC);
   
