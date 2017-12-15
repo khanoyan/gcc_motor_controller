@@ -80,6 +80,7 @@ Hardware Hookup:
 // XB_RX_10 and DIGITAL
 SoftwareSerial XBee(11, 10); // RX, TX (this is confusing and wrong, probably!)
 bool XBEE_ON;
+int xbee_counter;
 
 // ************************
 //        ROBOCLAW
@@ -136,6 +137,8 @@ struct COMMAND_FROM_THING_TO_MC{
 //      GLOBAL VARIABLES
 // ************************
 
+
+//HardCode the Mode of Rover
 int mode = MODE_ROVER
 
 byte drive_mode = SLOW;    // indicates which driving profile is currently used
@@ -146,6 +149,7 @@ DRIVE_PARAMS param[SPEED_SETTINGS];  // LUT for driving parameters
 unsigned long last_loop_time = 0;
 JOYSTICK_CMD jscmd;                  // current joystick command
 unsigned long jscmd_cnt = 0;         // count of commands from joystick
+COMMAND_FROM_THING_TO_MC CMDS_TO_MC;
 
 // current and goal speeds for each side
 
@@ -200,6 +204,7 @@ bool BackRight = 0;
 bool BackLeft = 0;
 
 bool dangerOverride=0;
+int dangerCounter=0;
 
 // ************************
 //       TELEMETRY
@@ -231,8 +236,8 @@ void loop() {
 
   if( (cur_time - last_loop_time) >  LOOP_PERIOD_MS) {
     last_loop_time = cur_time;
-//    Serial.print("loop time ");
-//    Serial.println(cur_time, DEC);
+    //    Serial.print("loop time ");
+    //    Serial.println(cur_time, DEC);
 
     // TODO: get MC battery levels. If 0, MC is not responding (ie: error)
     //get_roboclaw_status();
@@ -242,6 +247,26 @@ void loop() {
     
     // process JS inputs from XBee
     process_joystick_inputs();
+
+    // Delta Motor Controls Added
+    // 12/14/2017
+
+
+    //***********
+    // Get Thing
+    //***********
+    // Processing packets from SparkFun Thing sent from Wilbur
+    getThing();
+
+    //***********
+    //Get Danger
+    //***********
+    // Detects Bumper Collisions and Checks Currents
+    getDanger();
+
+
+
+
 
     // TODO: process commands from future serial input
     // TBD....

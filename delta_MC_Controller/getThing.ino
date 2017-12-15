@@ -1,12 +1,8 @@
-
-
-// CONFIRM WHAT NUMBERS ARE ENDING AND HEADER INITIALIZE COMMAND_FROM_THING_TO_MC
-
 bool getThing(){
 
   if (XBEE_ON == true){
     return false;
-    }
+  }
 
   else if(XBEE_ON == false){
 
@@ -14,7 +10,6 @@ bool getThing(){
     byte cmndArmArr[4];
 
     if (Serial3.available() >= 4){            // if there are 4 or more than 4 bytes in the buffer go in the loop
-
       delay(100);
       byte header[1];                         // create a byte array to check for header
       Serial3.readBytes(header, 1);           // read the byte into header
@@ -24,7 +19,7 @@ bool getThing(){
         if (mode == MODE_ROVER){              // if rover
 
           Serial3.readBytes(cmndRoverArr, 3); // read bytes into array
-          if (cmndRoverArr[2] == 234){        // check that ending byte is 234
+          if (cmndRoverArr[2] == 237){        // check that ending byte is 234
                                               // if the ending byte is 234 then save data into the struct
             CMDS_TO_MC.direction = cmndRoverArr[0];
             CMDS_TO_MC.duration = cmndRoverArr[1];

@@ -8,6 +8,7 @@
  *  
  *  
  *  check if getting xbee is on, if not then automatically slow mode
+ * Mariam Grigorian Fall 2017
  */
 
  
