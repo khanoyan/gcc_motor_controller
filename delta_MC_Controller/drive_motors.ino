@@ -5,40 +5,53 @@ void drive_motors() {
 
     //Identify if it is ROVER (0) or ARM (1)
 
-  if (ROBOT_ID==0) {
+  if (mode==0) {
 
-  if(batteryOK && mcL_batt>1 && mcR_batt>1) {  // IF ALL OK... 
-    if(cur_spd_lt != 0 || cur_spd_rt != 0) {
-      roboclaw1.SpeedM1(address,rover_cur_spd_lt);  
-      roboclaw1.SpeedM2(address,rover_cur_spd_lt);
-      roboclaw2.SpeedM1(address,rover_cur_spd_rt);
-      roboclaw2.SpeedM2(address,rover_cur_spd_rt); 
-    }
+    if(batteryOK && mc1_batt>1 && mc2_batt>1) {  // IF ALL OK... 
+      if(rover_cur_spd_lt != 0 || rover_cur_spd_rt != 0) {
+        roboclaw1.SpeedM1(address,rover_cur_spd_lt);  
+        roboclaw1.SpeedM2(address,rover_cur_spd_lt);
+        roboclaw2.SpeedM1(address,rover_cur_spd_rt);
+        roboclaw2.SpeedM2(address,rover_cur_spd_rt); 
+      }
 
-    else if(hillMode) {
-      roboclaw1.SpeedM1(address,0);
-      roboclaw1.SpeedM2(address,0);
-      roboclaw2.SpeedM1(address,0);
-      roboclaw2.SpeedM2(address,0);      
-      // drive to velocity 0
-    }
-    else if(!hillMode) {
+      else if(hillMode) {
+        roboclaw1.SpeedM1(address,0);
+        roboclaw1.SpeedM2(address,0);
+        roboclaw2.SpeedM1(address,0);
+        roboclaw2.SpeedM2(address,0);      
+        // drive to velocity 0
+      }
+      else if(!hillMode) {
+        roboclaw1.BackwardM1(address,0); //Stop Motor1 
+        roboclaw1.BackwardM2(address,0); //Stop Motor2 
+        roboclaw2.BackwardM1(address,0); //Stop Motor1 
+        roboclaw2.BackwardM2(address,0); //Stop Motor2      
+        // don't drive the motors anymore... 
+      }
+    } // if everything is OK
+
+    else if(!batteryOK) {
       roboclaw1.BackwardM1(address,0); //Stop Motor1 
       roboclaw1.BackwardM2(address,0); //Stop Motor2 
       roboclaw2.BackwardM1(address,0); //Stop Motor1 
       roboclaw2.BackwardM2(address,0); //Stop Motor2      
-      // don't drive the motors anymore... 
     }
-  } // if everything is OK
+  } // drive_motors(0)
+  else if (mode==1) {
 
-  else if(!batteryOK) {
-    roboclaw1.BackwardM1(address,0); //Stop Motor1 
-    roboclaw1.BackwardM2(address,0); //Stop Motor2 
-    roboclaw2.BackwardM1(address,0); //Stop Motor1 
-    roboclaw2.BackwardM2(address,0); //Stop Motor2      
+    if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
+      if(arm_cur_spd_m1 != 0 || arm_cur_spd_m2 != 0 || arm_cur_spd_m3 != 0 || arm_cur_spd_m4 != 0 || arm_cur_spd_m5 != 0 || arm_cur_spd_m6 != 0) {
+        roboclaw1.SpeedM1(address,arm_cur_spd_m1);
+        roboclaw1.SpeedM2(address,arm_cur_spd_m2);
+        roboclaw2.SpeedM1(address,arm_cur_spd_m3);
+        roboclaw2.SpeedM2(address,arm_cur_spd_m4); 
+        roboclaw3.SpeedM1(address,arm_cur_spd_m5);
+        roboclaw3.SpeedM2(address,arm_cur_spd_m6);
+      }   // drive_motors (1)
+    } 
   }
-} // drive_motors(0)
-
+}
 
 // get roboclaw's battery levels
 // if roboclaw is not responsive, set voltage to 0. this will
@@ -61,18 +74,5 @@ void get_roboclaw_status() {
   if(!rc2_alive) {
     mc2_batt = 0;
   }
-
+    
 } // get_roboclaw_status()
-
-  else if (ROBOT_ID==1) {
-
-if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
-    if(arm_cur_spd_1 != 0 || arm_cur_spd_2 != 0 || arm_cur_spd_3 != 0 || arm_cur_spd_4 != 0 || arm_cur_spd_5 != 0 || arm_cur_spd_6 != 0) {
-      roboclaw1.SpeedM1(address,arm_cur_spd_1);
-      robocLaw1.SpeedM2(address,arm_cur_spd_2);
-      roboclaw2.SpeedM3(address,arm_cur_spd_3);
-      roboclaw2.SpeedM4(address,arm_cur_spd_4); 
-      roboclaw3.SpeedM5(address,arm_cur_spd_5);
-      roboclaw3.SpeedM6(address,arm_cur_spd_6);
-    }   // drive_motors (1)
-  } 

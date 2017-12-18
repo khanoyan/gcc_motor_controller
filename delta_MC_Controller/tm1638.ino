@@ -10,10 +10,11 @@ void refresh_tm1638() {
   tm1638.clearDisplay();  
 
   char s[8];
-  if(drive_mode == LUDICROUS) {
-    snprintf(s,8, "LUDIC %02d", jscmd_cnt%99);
-  }
-  else if(hillMode) {
+//  if(drive_mode == LUDICROUS) {
+//    snprintf(s,8, "LUDIC %02d", jscmd_cnt%99);
+//  }
+//  else 
+  if(hillMode) {
     snprintf(s,8, "BRAKE %02d", jscmd_cnt%99);
   }
   else {
@@ -26,16 +27,16 @@ void refresh_tm1638() {
     led = led | 0x1;
   }
 
-  if(mcL_batt == 0) {
+  if(mc1_batt == 0) {
     led = led | 0x80;
   }
-  if(mcR_batt == 0) {
+  if(mc2_batt == 0) {
     led = led | 0x40;
   }
-
-  if(drive_mode == LUDICROUS) {
-    led = led | 0x4;
-  }
+//
+//  if(drive_mode == LUDICROUS) {
+//    led = led | 0x4;
+//  }
 
   tm1638.setLEDs(led);
 

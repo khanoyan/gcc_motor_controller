@@ -13,12 +13,10 @@ void process_joystick_inputs() {
   if (XBee.available()>0){
     XBEE_ON=true;
     xbee_counter =0;
+    static bool last_b4 = false;  // last state of B4 button
     //****Rover Mode******
     // RoverID is 0, ArmID is 1
-    if (robotID==0){
-    
-      static bool last_b4 = false;  // last state of B4 button
-    
+    if (mode==0){
       // read from XBee stream. parse and update jscmd struct
       byte bytes_to_read = XBee.available();
       
@@ -55,7 +53,7 @@ void process_joystick_inputs() {
     last_b4 = cur_b4; // set lastmode and current mode equal
 
     //Arm Mode
-    if (robotID==1){
+    if (mode==1){
       //if robotID=1 then arm mode
       drive_mode = ARM;
       hillMode= true;
@@ -64,131 +62,131 @@ void process_joystick_inputs() {
       set_goal_speed();
       show_joystick_inputs();
     }
-      
+  }
+}    
       // also check if this link is alive... if TBD millis have gone
       // since last msg, notify main program
       // every TBD cycles, send a HB message to joystick
       // process_joystick_inputs()
 
 
-    //*****Start of setting goal speeds******************************
-    // set our goal speeds based on the joystick inputs
-    void set_goal_speed() { 
+//*****Start of setting goal speeds******************************
+// set our goal speeds based on the joystick inputs
+void set_goal_speed() { 
 
       //****Rover Mode**************************************************
       
-    if (robotID=0){
+    if (mode==0){
       //rover if robotID=0
       if(jscmd.up && jscmd.lt) {
-        goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
-        goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
+        rover_goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
+        rover_goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
       }
       else if(jscmd.up && jscmd.rt) {
-        goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
-        goal_spd_rt = param[drive_mode].vel - param[drive_mode].diag;    
+        rover_goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
+        rover_goal_spd_rt = param[drive_mode].vel - param[drive_mode].diag;    
       }
       else if(jscmd.dn && jscmd.lt) {
-        goal_spd_lt = -param[drive_mode].vel + param[drive_mode].diag;
-        goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
+        rover_goal_spd_lt = -param[drive_mode].vel + param[drive_mode].diag;
+        rover_goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
       }
       else if(jscmd.dn && jscmd.rt) {
-        goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
-        goal_spd_rt = -param[drive_mode].vel + param[drive_mode].diag;    
+        rover_goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
+        rover_goal_spd_rt = -param[drive_mode].vel + param[drive_mode].diag;    
       }  
       else if(jscmd.up) {
-        goal_spd_lt = param[drive_mode].vel;
-        goal_spd_rt = param[drive_mode].vel;
+        rover_goal_spd_lt = param[drive_mode].vel;
+        rover_goal_spd_rt = param[drive_mode].vel;
       }
       else if(jscmd.dn) {
-        goal_spd_lt = -param[drive_mode].vel;
-        goal_spd_rt = -param[drive_mode].vel;
+        rover_goal_spd_lt = -param[drive_mode].vel;
+        rover_goal_spd_rt = -param[drive_mode].vel;
       }
       else if(jscmd.lt) {
-        goal_spd_lt = -param[drive_mode].vel;
-        goal_spd_rt = param[drive_mode].vel;    
+        rover_goal_spd_lt = -param[drive_mode].vel;
+        rover_goal_spd_rt = param[drive_mode].vel;    
       }
       else if(jscmd.rt) {
-        goal_spd_lt = param[drive_mode].vel;
-        goal_spd_rt = -param[drive_mode].vel;    
+        rover_goal_spd_lt = param[drive_mode].vel;
+        rover_goal_spd_rt = -param[drive_mode].vel;    
       }
       else {
-        goal_spd_lt = 0;
-        goal_spd_rt = 0;     
+        rover_goal_spd_lt = 0;
+        rover_goal_spd_rt = 0;     
       }
       
     }
 
     //*****for arm ***************************************************
-    if (robotID==1){
+    if (mode==1){
       //if robotID=1 then arm mode
 
       //GRIP:!!!!!!!!!!!!!!!!!!
       // Grip open 
       if(jscmd.b1) {
-        goal_spd_M6 = param[drive_mode].vel;
+        arm_goal_spd_m6 = param[drive_mode].vel;
       }
 
       // Grip close
       if(jscmd.b3) {
-        goal_spd_M6 = -param[drive_mode].vel;
+        arm_goal_spd_m6 = -param[drive_mode].vel;
       }
       //WRIST:
       // Wrist right
       if(jscmd.rt) {
-        goal_spd_M4 = param[drive_mode].vel;
-        goal_spd_M5 = param[drive_mode].vel;
+        arm_goal_spd_m4 = param[drive_mode].vel;
+        arm_goal_spd_m5 = param[drive_mode].vel;
       }
       // Wrist left
       if(jscmd.lt) {
-        goal_spd_M4 = -param[drive_mode].vel;
-        goal_spd_M5 = -param[drive_mode].vel;
+        arm_goal_spd_m4 = -param[drive_mode].vel;
+        arm_goal_spd_m5 = -param[drive_mode].vel;
       }
       //Wrist up
       if(jscmd.up) {
-        goal_spd_M4 = -param[drive_mode].vel;
-        goal_spd_M5 = param[drive_mode].vel;
+        arm_goal_spd_m4 = -param[drive_mode].vel;
+        arm_goal_spd_m5 = param[drive_mode].vel;
       }
       //Wrist down
       if(jscmd.dn) {
-        goal_spd_M4 = param[drive_mode].vel;
-        goal_spd_M5 = -param[drive_mode].vel;
+        arm_goal_spd_m4 = param[drive_mode].vel;
+        arm_goal_spd_m5 = -param[drive_mode].vel;
       }
 
       //ELBOW:
       //Elbow up
-      if(jscmd.L1) {
-        goal_spd_M3 = -param[drive_mode].vel;
+      if(jscmd.l1) {
+        arm_goal_spd_m3 = -param[drive_mode].vel;
       }
       //Elbow down
-      if(jscmd.L2) {
-        goal_spd_M3 = param[drive_mode].vel;
+      if(jscmd.l2) {
+        arm_goal_spd_m3 = param[drive_mode].vel;
       }
 
       //SHOULDER:
       //Shoulder up
-      if(jscmd.R1) {
-        goal_spd_M2 = param[drive_mode].vel;
+      if(jscmd.r1) {
+        arm_goal_spd_m2 = param[drive_mode].vel;
       }
       //Shoulder down
-      if(jscmd.R2) {
-        goal_spd_M2 = -param[drive_mode].vel;
+      if(jscmd.r2) {
+        arm_goal_spd_m2 = -param[drive_mode].vel;
       }
 
       //BASE:
       //Base left
       if(jscmd.b2) {
-        goal_spd_M1 = -param[drive_mode].vel;
+        arm_goal_spd_m1 = -param[drive_mode].vel;
       }
       //Base right
       if(jscmd.b4) {
-        goal_spd_M1 = param[drive_mode].vel;
+        arm_goal_spd_m1 = param[drive_mode].vel;
       }
     }
+  else if(XBee.available()==0 && xbee_counter<100){
+    xbee_counter++;
   }
-  else if(XBee.available()==0&&count<100{
-    count++;
-  }
-  else if(XBee.available()==0&&count>100){
+  else if(XBee.available()==0 && xbee_counter>100){
     XBEE_ON=false;
   }
 } // end set_goal_speed()
