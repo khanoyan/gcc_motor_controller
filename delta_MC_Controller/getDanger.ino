@@ -1,41 +1,5 @@
 
 void getDanger(){
-  
-  //****************************
-  //Intializing Danger Variables
-  //****************************
-  bool dangerFront = false;
-  bool dangerBack = false;
-
-  int16_t currentM1 = 0;
-  int16_t currentM2 = 0;
-  int16_t currentM3 = 0;
-  int16_t currentM4 = 0;
-  int16_t currentM5 = 0;
-  int16_t currentM6 = 0;
-
-  bool dangerOverride = false;
-
-  bool dangerM1 = false;
-  bool dangerM2 = false;
-  bool dangerM3 = false;
-  bool dangerM4 = false;
-  bool dangerM5 = false;
-  bool dangerM6 = false;   
-
-  bool FrontRight = false;
-  bool FrontLeft = false;
-  bool BackRight = false;
-  bool BackLeft = false;
-  //***********************
-
-  int M1_thresh = 1;
-  int M2_thresh = 2;
-  int M3_thresh = 3;
-  int M4_thresh = 4;
-  int M5_thresh = 5;
-  int M6_thresh = 6;              // undertermined values; requires testing
-
   if( dangerOverride = true){
     bool dangerM1 = false;
     bool dangerM2 = false;
