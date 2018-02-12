@@ -190,13 +190,10 @@ bool batteryOK = true;               // battery status is OK flag
 //    DANGER
 // ************************
 
-// Danger Override
-bool dangerOverride = false;
 
-// Rover Danger Variables
-bool dangerFront = false;
-bool dangerBack = false;
-
+bool dangerOverride = false;                        // Danger Override
+bool dangerFront = false;                           // Rover Danger Variables
+bool dangerBack = false;                            // Rover Danger Variables
 bool FrontRight = false;
 bool FrontLeft = false;
 bool BackRight = false;
@@ -226,21 +223,21 @@ int M5_thresh = 5;
 int M6_thresh = 6;              // undertermined values; requires testing
 
 // Pin Locations for Rover
-int BUTTON_PIN_FRONT_R = 43;
+int BUTTON_PIN_FRONT_R = 43;  
 int BUTTON_PIN_FRONT_L = 41;
 int BUTTON_PIN_BACK_R = 47;
-int BUTTON_PIN_BACK_L = 45;     // arbitrary pin locations
+int BUTTON_PIN_BACK_L = 45;     
 
 // ************************
 //       TELEMETRY
 // ************************
 
-uint16_t currentM1 =0;
-uint16_t currentM2 =0;
-uint16_t currentM3 =0;
-uint16_t currentM4 =0;
-uint16_t currentM5 =0;
-uint16_t currentM6 =0;
+uint8_t currentM1=0;
+uint8_t currentM2=0;
+uint8_t currentM3=0;
+uint8_t currentM4 =0;
+uint8_t currentM5 =0;
+uint8_t currentM6 =0;
 
 
 
@@ -267,13 +264,7 @@ void loop() {
     //    Serial.print("loop time ");
     //    Serial.println(cur_time, DEC);
 
-    // TODO: get MC battery levels. If 0, MC is not responding (ie: error)
-    //get_roboclaw_status();
-    
-    // TODO: get button states from TM1638
-    //process_tm1638_keys();
-    
-    // process JS inputs from XBee
+    // getJoyStick()
     process_joystick_inputs();
 
     // Delta Motor Controls Added
@@ -287,7 +278,7 @@ void loop() {
     getThing();
 
     //***********
-    //Get Danger
+    // Get Danger
     //***********
     // Detects Bumper Collisions and Checks Currents
     getDanger();
@@ -330,7 +321,23 @@ void loop() {
 
     // update the display status
     refresh_tm1638();
-   
+
+    // update values of motor controller
+    //getStatus();
+
+    // send information up to web client
+    //sendTelemetry();
+
+    // check if arduino is alive
+    //ping();
+  
+
+    // TODO: get MC battery levels. If 0, MC is not responding (ie: error)
+    //get_roboclaw_status();
+    
+    // TODO: get button states from TM1638
+    //process_tm1638_keys();
+    
   } // big if 50Hz loop
   else {
     delay(LOOP_PERIOD_MS / 10);

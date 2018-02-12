@@ -2,7 +2,7 @@
 // populate the jscmd struct
 
 
-void process_joystick_inputs() {
+void getJoystick() {
 
   //if xbee is not avaiable and less than 100
   //increase count

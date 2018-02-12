@@ -1,4 +1,4 @@
-3// drive with velocity command
+// drive with velocity command
 void drive_motors() {
     
     //Code By Avery

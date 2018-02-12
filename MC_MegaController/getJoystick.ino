@@ -2,7 +2,7 @@
 // populate the jscmd struct
 //
 
-void process_joystick_inputs() {
+void getJoystick() {
 
   static bool last_b4 = false;  // last state of B4 button
 
@@ -57,8 +57,8 @@ void process_joystick_inputs() {
       
       if(lud_drive_timer == 0) {
         drive_mode = SLOW;
-//        cur_spd_lt = param[SLOW].vel;
-//        cur_spd_rt = param[SLOW].vel;        
+                                    //        cur_spd_lt = param[SLOW].vel;
+                                    //        cur_spd_rt = param[SLOW].vel;        
       }
     }
     

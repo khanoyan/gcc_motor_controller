@@ -12,7 +12,7 @@
  */
 
  
-void set_new_speed(){
+void setSpeed(){
   int goal_thr = param[drive_mode].thr;
   int goal_ramp = param[drive_mode].ramp;
 

@@ -1,4 +1,3 @@
-
 void getDanger(){
   if( dangerOverride = true){
     bool dangerM1 = false;
