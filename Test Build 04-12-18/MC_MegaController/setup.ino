@@ -53,12 +53,6 @@ void setup() {
   // flush XBee serial stream before we get into loop()
   XBee.flush();
 
-//  int XBEE_COUNT = 0;
-//
-//  while(XBee.available()<1 && XBEE_COUNT < 6){
-//    delay(1000);
-//    count++;
-//  }
   if(XBee.available()>0){
     XBEE_ON = true;
   }
@@ -67,7 +61,7 @@ void setup() {
   }
 
   //set the counter to 0
-  xbee_counter =0;
+  xbee_counter=0;
 
   //Initalizing Bumper Pins
   pinMode(BUTTON_PIN_FRONT_R, INPUT);

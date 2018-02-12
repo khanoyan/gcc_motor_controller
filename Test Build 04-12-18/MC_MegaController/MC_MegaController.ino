@@ -34,7 +34,6 @@ Hardware Hookup:
 // Digital output for visual indication of Ludicrous mode
 #define BIGLIGHT_PIN 31
 
-
 // *******************************
 // **   Parameters 
 // *******************************
@@ -98,8 +97,6 @@ int xbee_counter = 0;
 RoboClaw roboclaw1(&Serial2,10000);
 RoboClaw roboclaw2(&Serial3,10000); // 2
 RoboClaw roboclaw3(&Serial1, 10000);
-
-
 
 // ************************
 // setup TM1638 module
@@ -190,8 +187,8 @@ bool batteryOK = true;               // battery status is OK flag
 //    DANGER
 // ************************
 
-
 bool dangerOverride = false;                        // Danger Override
+int dangerCounter = 0;
 bool dangerFront = false;                           // Rover Danger Variables
 bool dangerBack = false;                            // Rover Danger Variables
 bool FrontRight = false;
@@ -232,13 +229,12 @@ int BUTTON_PIN_BACK_L = 45;
 //       TELEMETRY
 // ************************
 
-uint8_t currentM1=0;
-uint8_t currentM2=0;
-uint8_t currentM3=0;
-uint8_t currentM4 =0;
-uint8_t currentM5 =0;
-uint8_t currentM6 =0;
-
+uint8_t currentM1;
+uint8_t currentM2;
+uint8_t currentM3;
+uint8_t currentM4;
+uint8_t currentM5;
+uint8_t currentM6;
 
 
 /* ************************************************************
@@ -265,7 +261,7 @@ void loop() {
     //    Serial.println(cur_time, DEC);
 
     // getJoyStick()
-    process_joystick_inputs();
+    getJoystick();
 
     // Delta Motor Controls Added
     // 12/14/2017
@@ -298,7 +294,7 @@ void loop() {
     //    }
   
     // set new speed based on time and current parameters
-    set_new_speed();
+    setSpeed();
 
 //    Serial.print("goalL: ");
 //    Serial.print(goal_spd_lt, DEC);
@@ -317,7 +313,7 @@ void loop() {
   
 
     // drive the newly calculated speed
-    drive_motors();
+    driveMotors();
 
     // update the display status
     refresh_tm1638();

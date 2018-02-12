@@ -16,7 +16,7 @@ void getJoystick() {
     static bool last_b4 = false;  // last state of B4 button
     //****Rover Mode******
     // RoverID is 0, ArmID is 1
-    if (mode==0){
+    if (mode==MODE_ROVER){
       // read from XBee stream. parse and update jscmd struct
       byte bytes_to_read = XBee.available();
       
@@ -53,7 +53,7 @@ void getJoystick() {
     last_b4 = cur_b4; // set lastmode and current mode equal
 
     //Arm Mode
-    if (mode==1){
+    if (mode==MODE_ARM){
       //if robotID=1 then arm mode
       drive_mode = ARM;
       hillMode= true;
@@ -76,7 +76,7 @@ void set_goal_speed() {
 
       //****Rover Mode**************************************************
       
-    if (mode==0){
+    if (mode==MODE_ROVER){
       //rover if robotID=0
       if(jscmd.up && jscmd.lt) {
         rover_goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
@@ -118,7 +118,7 @@ void set_goal_speed() {
     }
 
     //*****for arm ***************************************************
-    if (mode==1){
+    if (mode==MODE_ARM){
       //if robotID=1 then arm mode
 
       //GRIP:!!!!!!!!!!!!!!!!!!

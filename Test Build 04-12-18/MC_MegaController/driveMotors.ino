@@ -1,5 +1,5 @@
 // drive with velocity command
-void drive_motors() {
+void driveMotors() {
     
     //Code By Avery
 

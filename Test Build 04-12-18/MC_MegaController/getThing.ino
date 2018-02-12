@@ -1,3 +1,11 @@
+/*************************
+
+  Get Thing
+
+  Parses Commands from Web Client. Header value of packet should be 183 and Footer is 237
+
+**************************/
+
 bool getThing(){
 
   if (XBEE_ON == true){

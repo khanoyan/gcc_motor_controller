@@ -1,14 +1,14 @@
 void getDanger(){
-  if( dangerOverride = true){
-    bool dangerM1 = false;
-    bool dangerM2 = false;
-    bool dangerM3 = false;
-    bool dangerM4 = false;
-    bool dangerM5 = false;
-    bool dangerM6 = false;   
+  if( dangerOverride == true){
+    dangerM1 = false;
+    dangerM2 = false;
+    dangerM3 = false;
+    dangerM4 = false;
+    dangerM5 = false;
+    dangerM6 = false;   
 
-    bool dangerFront = false;
-    bool dangerBack = false;
+    dangerFront = false;
+    dangerBack = false;
 
   }
 
@@ -39,9 +39,9 @@ void getDanger(){
     else if( mode == MODE_ARM){
       if(dangerCounter == 50){
         
-        roboclaw1.ReadCurrents(address, currentM1, currentM2);
-        roboclaw2.ReadCurrents(address, currentM3, currentM4);
-        roboclaw3.ReadCurrents(address, currentM5, currentM6);
+//        roboclaw1.ReadCurrents(address, currentM1, currentM2);
+//        roboclaw2.ReadCurrents(address, currentM3, currentM4);
+//        roboclaw3.ReadCurrents(address, currentM5, currentM6);
         
         if(currentM1 > M1_thresh){
           dangerM1 = true;
