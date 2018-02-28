@@ -5,8 +5,8 @@ void driveMotors() {
 
     //Identify if it is ROVER (0) or ARM (1)
 
-  if (mode==0) {
-
+  if (mode==MODE_ROVER) {
+    
     if(batteryOK && mc1_batt>1 && mc2_batt>1) {  // IF ALL OK... 
       if(rover_cur_spd_lt != 0 || rover_cur_spd_rt != 0) {
         roboclaw1.SpeedM1(address,rover_cur_spd_lt);  
@@ -38,7 +38,7 @@ void driveMotors() {
       roboclaw2.BackwardM2(address,0); //Stop Motor2      
     }
   } // drive_motors(0)
-  else if (mode==1) {
+  else if (mode==MODE_ARM) {
 
     if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
       if(arm_cur_spd_m1 != 0 || arm_cur_spd_m2 != 0 || arm_cur_spd_m3 != 0 || arm_cur_spd_m4 != 0 || arm_cur_spd_m5 != 0 || arm_cur_spd_m6 != 0) {

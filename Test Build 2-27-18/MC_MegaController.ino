@@ -154,14 +154,14 @@ COMMAND_FROM_THING_TO_MC CMDS_TO_MC;
 
 int rover_cur_spd_lt  = 0;                 // current left motor speed for Rover
 int rover_cur_spd_rt  = 0;                 // current right motor speed for Rover
+int rover_goal_spd_lt = 0;                 // left motor goal speed for Rover
+int rover_goal_spd_rt = 0;                 // right motor goal speed for Rover 
 int arm_cur_spd_m1  = 0;                 // current motor1 speed for Arm
 int arm_cur_spd_m2  = 0;                 // current motor2 speed for Arm
 int arm_cur_spd_m3  = 0;                 // current motor3 speed for Arm
 int arm_cur_spd_m4  = 0;                 // current motor4 speed for Arm
 int arm_cur_spd_m5  = 0;                 // current motor5 speed for Arm
 int arm_cur_spd_m6  = 0;                 // current motor6 speed for Arm
-int rover_goal_spd_lt = 0;                 // left motor goal speed for Rover
-int rover_goal_spd_rt = 0;                 // right motor goal speed for Rover 
 int arm_goal_spd_m1 = 0;                 // motor1 goal speed for Arm
 int arm_goal_spd_m2 = 0;                 // motor2 goal speed for Arm
 int arm_goal_spd_m3 = 0;                 // motor3 goal speed for Arm
@@ -248,10 +248,11 @@ uint8_t currentM6;
      - determine new motor speed
      - set new motor speed
      - update TM1638 display
-  *************************************************************/
+  ************************************************************
+*/
   
 void loop() {
-
+    
   // get current time in millis
   unsigned long cur_time = millis();
 
@@ -260,7 +261,17 @@ void loop() {
     //    Serial.print("loop time ");
     //    Serial.println(cur_time, DEC);
 
-    // getJoyStick()
+    //may not need since included in get joystick
+    // Check if joystick is on
+    //if(XBee.available()>0){
+      //XBEE_ON = true;
+    //}
+    //else{
+      //XBEE_ON = false;
+    //}
+
+
+    // Get JoyStick Commands
     getJoystick();
 
     // Delta Motor Controls Added
@@ -271,13 +282,13 @@ void loop() {
     // Get Thing
     //***********
     // Processing packets from SparkFun Thing sent from Wilbur
-    getThing();
+    //getThing();
 
     //***********
     // Get Danger
     //***********
     // Detects Bumper Collisions and Checks Currents
-    getDanger();
+    //getDanger();
 
 
 

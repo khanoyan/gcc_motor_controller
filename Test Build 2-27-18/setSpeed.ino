@@ -38,11 +38,14 @@ void setSpeed(){
   }
 
   else {
-  //************************Rover Mode with joystick *******************************
-    if(XBEE_ON == 0){
-    
+    //************************Joystick *******************************
+    if(XBEE_ON == true){
+
+      //*********************Rover Joystick ***************************
       if (mode == MODE_ROVER){
-        if( !( (rover_goal_spd_lt-goal_thr < rover_cur_spd_lt) && (rover_goal_spd_lt+goal_thr > rover_cur_spd_lt) ) ) {  
+        //are we checking which joystick commands are triggered
+        
+        if( !( (rover_goal_spd_lt-goal_ramp < rover_cur_spd_lt) && (rover_goal_spd_lt+goal_ramp > rover_cur_spd_lt) ) ) {  
           if(rover_cur_spd_lt < rover_goal_spd_lt) {
             rover_cur_spd_lt += goal_ramp;
           }
@@ -51,7 +54,7 @@ void setSpeed(){
           }
         }
 
-        if( !( (rover_goal_spd_rt-goal_thr < rover_cur_spd_rt) && (rover_goal_spd_rt+goal_thr > rover_cur_spd_rt) ) ) { 
+        if( !( (rover_goal_spd_rt-goal_ramp < rover_cur_spd_rt) && (rover_goal_spd_rt+goal_ramp > rover_cur_spd_rt) ) ) { 
           if(rover_cur_spd_rt < rover_goal_spd_rt) {
             rover_cur_spd_rt += goal_ramp;
           }
@@ -59,8 +62,11 @@ void setSpeed(){
             rover_cur_spd_rt -= goal_ramp;
           }      
         }
+
+
+        
       }
-      // ********************* Arm Mode with joystick**********************
+      // ********************* Arm Mode Joystick**********************
       else if (mode == MODE_ARM){
         if ( ! ( (arm_goal_spd_m1-goal_thr < arm_cur_spd_m1)  &&  (arm_goal_spd_m1+goal_thr > arm_cur_spd_m1) )  )       // if speed is not within range 
         {  
@@ -133,7 +139,7 @@ void setSpeed(){
   //************************End of Arm Mode****************************
 
   //************************Rover Mode with THING************************  
-    else if(XBEE_ON == 1)     // if thing is not alive and THING comes in
+    else if(XBEE_ON == false)     // if thing is not alive and THING comes in
     { 
       drive_mode = SLOW;   // drive mode for arm and rover should be slow 
       if (mode == MODE_ROVER){

@@ -6,13 +6,9 @@
 
 **************************/
 
-bool getThing(){
+void getThing(){
 
-  if (XBEE_ON == true){
-    return false;
-  }
-
-  else if(XBEE_ON == false){
+  if(XBEE_ON == false){
 
     byte cmndRoverArr[3];
     byte cmndArmArr[4];
@@ -49,5 +45,4 @@ bool getThing(){
       }
     }
   }
-  return true;
 }

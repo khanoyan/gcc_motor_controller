@@ -12,6 +12,7 @@ void getJoystick() {
 
   if (XBee.available()>0){
     XBEE_ON=true;
+    
     xbee_counter =0;
     static bool last_b4 = false;  // last state of B4 button
     //****Rover Mode******
@@ -23,7 +24,7 @@ void getJoystick() {
       if(bytes_to_read >= 2) {
         for(byte i = 0; i< bytes_to_read; i++) {
           parse_xbee_byte();
-          jscmd_cnt++;
+          jscmd_cnt++;          
         }
 
         //check if danger override button is pushed or not!
@@ -34,15 +35,18 @@ void getJoystick() {
           dangerOverride = false;
         }
       }
+      //set the drive mode slow of fast
+      if(jscmd.r2) {
+        drive_mode = FAST; 
+      }
+      else {
+        drive_mode = SLOW;
+      }
+
+      set_goal_speed();
     }
 
-    //set the drive mode slow of fast
-    if(jscmd.r2) {
-      drive_mode = FAST; 
-    }
-    else {
-      drive_mode = SLOW;
-    }
+    
 
     // check if button 4 state has changed...
     // b4 tells us to toggle the hold mode
@@ -183,12 +187,12 @@ void set_goal_speed() {
         arm_goal_spd_m1 = param[drive_mode].vel;
       }
     }
-  else if(XBee.available()==0 && xbee_counter<100){
-    xbee_counter++;
-  }
-  else if(XBee.available()==0 && xbee_counter>100){
-    XBEE_ON=false;
-  }
+    if(XBee.available()==0 && xbee_counter<100){
+      xbee_counter++;
+    }
+    else if(XBee.available()==0 && xbee_counter>100){
+      XBEE_ON=false;
+    }
 } // end set_goal_speed()
 
   
