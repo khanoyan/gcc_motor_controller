@@ -45,7 +45,7 @@ void setSpeed(){
       if (mode == MODE_ROVER){
         //are we checking which joystick commands are triggered
         
-        if( !( (rover_goal_spd_lt-goal_ramp < rover_cur_spd_lt) && (rover_goal_spd_lt+goal_ramp > rover_cur_spd_lt) ) ) {  
+        if( !( (rover_goal_spd_lt-goal_thr < rover_cur_spd_lt) && (rover_goal_spd_lt+goal_ramp > rover_cur_spd_lt) ) ) {  
           if(rover_cur_spd_lt < rover_goal_spd_lt) {
             rover_cur_spd_lt += goal_ramp;
           }
@@ -54,7 +54,7 @@ void setSpeed(){
           }
         }
 
-        if( !( (rover_goal_spd_rt-goal_ramp < rover_cur_spd_rt) && (rover_goal_spd_rt+goal_ramp > rover_cur_spd_rt) ) ) { 
+        if( !( (rover_goal_spd_rt-goal_thr < rover_cur_spd_rt) && (rover_goal_spd_rt+goal_ramp > rover_cur_spd_rt) ) ) { 
           if(rover_cur_spd_rt < rover_goal_spd_rt) {
             rover_cur_spd_rt += goal_ramp;
           }
