@@ -1,166 +1,206 @@
 // read and parse full packet from XBee interface and 
 // populate the jscmd struct
-//
+
 
 void getJoystick() {
 
-  static bool last_b4 = false;  // last state of B4 button
+  //if xbee is not avaiable and less than 100
+  //increase count
+  //if xbee is avaiable, set count to 0
+  //if xbee count is greater than 100
+  //xbee is off
 
-  static int lud_hold_count = 0;
-  static int lud_drive_timer = 0; 
-  
-  // read from XBee stream. parse and update jscmd struct
-  byte bytes_to_read = XBee.available();
-  if(bytes_to_read >= 2) {
-    
-    for(byte i = 0; i< bytes_to_read; i++) {
-      parse_xbee_byte();
-      jscmd_cnt++;
+  if (XBee.available()>0){
+    lastTimeJSMessageRecieved = millis();
+    xbee_on = true;
+    xbee_counter =0;
+    static bool last_b4 = false;  // last state of B4 button
+    //****Rover Mode******
+    // RoverID is 0, ArmID is 1
+    if (mode==MODE_ROVER){
+      // read from XBee stream. parse and update jscmd struct
+      byte bytes_to_read = XBee.available();
+      
+      if(bytes_to_read >= 2) {
+        for(byte i = 0; i< bytes_to_read; i++) {
+          parse_xbee_byte();
+          jscmd_cnt++;          
+        }
+
+        //check if danger override button is pushed or not!
+        if(jscmd.b2) {
+          dangerOverride = true;    
+        }
+        else{
+          dangerOverride = false;
+        }
+      }
+      //set the drive mode slow of fast
+      if(jscmd.r2) {
+        drive_mode = FAST; 
+      }
+      else {
+        drive_mode = SLOW;
+      }
+
+      set_goal_speed();
     }
-
-    // check if R2 is pressed so that we switch to FAST
-    // FAST mode is a momentary switch
-    if(drive_mode != LUDICROUS) {
-      if(jscmd.r2) {  drive_mode = FAST;   }
-      else         {  drive_mode = SLOW;   }
-    }
-
     // check if button 4 state has changed...
     // b4 tells us to toggle the hold mode
     bool cur_b4 = jscmd.b4;
     if(!last_b4 && cur_b4) {
       hillMode = !hillMode;
     }
-    last_b4 = cur_b4;
+    last_b4 = cur_b4; // set lastmode and current mode equal
 
-    // detect proper key combo to enter LUDICROUS mode
-    if(jscmd.b3 && jscmd.l2 && jscmd.r1) {
-      lud_hold_count++;
-    }
-    else {
-      lud_hold_count = 0;
-    }
-    if(lud_hold_count >= LUDICROUS_COMBO_HOLD_COUNT) {
-      drive_mode = LUDICROUS;
-      param[LUDICROUS].vel = VEL_LUDICROUS;
-      lud_drive_timer = LUDICROUS_DRIVE_TIME;
-      lud_hold_count = 0;
-    }
-
-    // if in LUDICROUS mode, stop after TBD seconds
-    if(drive_mode == LUDICROUS) {
-      lud_drive_timer--;
-
-      if(lud_drive_timer < 8) {
-        param[LUDICROUS].vel -= RAMP_RATE_LUDICROUS;
-      }
+    //Arm Mode
+    if (mode==MODE_ARM){
+      //if robotID=1 then arm mode
+      drive_mode = ARM;
+      hillMode= true;
       
-      if(lud_drive_timer == 0) {
-        drive_mode = SLOW;
-                                    //        cur_spd_lt = param[SLOW].vel;
-                                    //        cur_spd_rt = param[SLOW].vel;        
-      }
+      // update the goal speeds
+      set_goal_speed();
+      show_joystick_inputs();
+    }
+  }
+  else{
+    xbee_on=false;
+    if(millis() - lastTimeJSMessageRecieved > 1000){
+      rover_goal_spd_lt = 0;
+      rover_goal_spd_rt = 0;  
     }
     
-    // update the goal speeds
-    set_goal_speed();
-    show_joystick_inputs();
   }
-
-  // also check if this link is alive... if TBD millis have gone
-  // since last msg, notify main program
-
-  // every TBD cycles, send a HB message to joystick
-  
-} // process_joystick_inputs()
+}    
+      // also check if this link is alive... if TBD millis have gone
+      // since last msg, notify main program
+      // every TBD cycles, send a HB message to joystick
+      // process_joystick_inputs()
 
 
-
+//*****Start of setting goal speeds******************************
 // set our goal speeds based on the joystick inputs
-void set_goal_speed() {
-  if(jscmd.up && jscmd.lt) {
-    goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
-    goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
-  }
-  else if(jscmd.up && jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
-    goal_spd_rt = param[drive_mode].vel - param[drive_mode].diag;    
-  }
-  else if(jscmd.dn && jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel + param[drive_mode].diag;
-    goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
-  }
-  else if(jscmd.dn && jscmd.rt) {
-    goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
-    goal_spd_rt = -param[drive_mode].vel + param[drive_mode].diag;    
-  }  
-  else if(jscmd.up) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;
-  }
-  else if(jscmd.dn) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;
-  }
-  else if(jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;    
-  }
-  else if(jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;    
-  }
-  else {
-    goal_spd_lt = 0;
-    goal_spd_rt = 0;     
-  }
+void set_goal_speed() { 
+
+      //****Rover Mode**************************************************
+      
+    if (mode==MODE_ROVER){
+      //rover if robotID=0
+      if(jscmd.up && jscmd.lt) {
+        rover_goal_spd_lt = param[drive_mode].vel - param[drive_mode].diag;
+        rover_goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
+      }
+      else if(jscmd.up && jscmd.rt) {
+        rover_goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
+        rover_goal_spd_rt = param[drive_mode].vel - param[drive_mode].diag;    
+      }
+      else if(jscmd.dn && jscmd.lt) {
+        rover_goal_spd_lt = -param[drive_mode].vel + param[drive_mode].diag;
+        rover_goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
+      }
+      else if(jscmd.dn && jscmd.rt) {
+        rover_goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
+        rover_goal_spd_rt = -param[drive_mode].vel + param[drive_mode].diag;    
+      }  
+      else if(jscmd.up) {
+        rover_goal_spd_lt = param[drive_mode].vel;
+        rover_goal_spd_rt = param[drive_mode].vel;
+      }
+      else if(jscmd.dn) {
+        rover_goal_spd_lt = -param[drive_mode].vel;
+        rover_goal_spd_rt = -param[drive_mode].vel;
+      }
+      else if(jscmd.lt) {
+        rover_goal_spd_lt = -param[drive_mode].vel;
+        rover_goal_spd_rt = param[drive_mode].vel;    
+      }
+      else if(jscmd.rt) {
+        rover_goal_spd_lt = param[drive_mode].vel;
+        rover_goal_spd_rt = -param[drive_mode].vel;    
+      }
+      else {
+        rover_goal_spd_lt = 0;
+        rover_goal_spd_rt = 0;     
+      }
+      
+    }
+
+    //*****for arm ***************************************************
+    if (mode==MODE_ARM){
+      //if robotID=1 then arm mode
+
+      //GRIP:!!!!!!!!!!!!!!!!!!
+      // Grip open 
+      if(jscmd.b1) {
+        arm_goal_spd_m6 = param[drive_mode].vel;
+      }
+
+      // Grip close
+      if(jscmd.b3) {
+        arm_goal_spd_m6 = -param[drive_mode].vel;
+      }
+      //WRIST:
+      // Wrist right
+      if(jscmd.rt) {
+        arm_goal_spd_m4 = param[drive_mode].vel;
+        arm_goal_spd_m5 = param[drive_mode].vel;
+      }
+      // Wrist left
+      if(jscmd.lt) {
+        arm_goal_spd_m4 = -param[drive_mode].vel;
+        arm_goal_spd_m5 = -param[drive_mode].vel;
+      }
+      //Wrist up
+      if(jscmd.up) {
+        arm_goal_spd_m4 = -param[drive_mode].vel;
+        arm_goal_spd_m5 = param[drive_mode].vel;
+      }
+      //Wrist down
+      if(jscmd.dn) {
+        arm_goal_spd_m4 = param[drive_mode].vel;
+        arm_goal_spd_m5 = -param[drive_mode].vel;
+      }
+
+      //ELBOW:
+      //Elbow up
+      if(jscmd.l1) {
+        arm_goal_spd_m3 = -param[drive_mode].vel;
+      }
+      //Elbow down
+      if(jscmd.l2) {
+        arm_goal_spd_m3 = param[drive_mode].vel;
+      }
+
+      //SHOULDER:
+      //Shoulder up
+      if(jscmd.r1) {
+        arm_goal_spd_m2 = param[drive_mode].vel;
+      }
+      //Shoulder down
+      if(jscmd.r2) {
+        arm_goal_spd_m2 = -param[drive_mode].vel;
+      }
+
+      //BASE:
+      //Base left
+      if(jscmd.b2) {
+        arm_goal_spd_m1 = -param[drive_mode].vel;
+      }
+      //Base right
+      if(jscmd.b4) {
+        arm_goal_spd_m1 = param[drive_mode].vel;
+      }
+    }
+    if(XBee.available()==0 && xbee_counter<100){
+      xbee_counter++;
+    }
+    else if(XBee.available()==0 && xbee_counter>100){
+      xbee_on=false;
+    }
+} // end set_goal_speed()
+
   
- 
-} // set_goal_speed()
-
-// set our goal speeds based on the joystick inputs
-void set_goal_speed_working() {
-  if(jscmd.up && jscmd.lt) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel + param[drive_mode].diag;    
-  }
-  else if(jscmd.up && jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel + param[drive_mode].diag;
-    goal_spd_rt = param[drive_mode].vel;    
-  }
-  else if(jscmd.dn && jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel - param[drive_mode].diag;    
-  }
-  else if(jscmd.dn && jscmd.rt) {
-    goal_spd_lt = -param[drive_mode].vel - param[drive_mode].diag;
-    goal_spd_rt = -param[drive_mode].vel;    
-  }  
-  else if(jscmd.up) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;
-  }
-  else if(jscmd.dn) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;
-  }
-  else if(jscmd.lt) {
-    goal_spd_lt = -param[drive_mode].vel;
-    goal_spd_rt = param[drive_mode].vel;    
-  }
-  else if(jscmd.rt) {
-    goal_spd_lt = param[drive_mode].vel;
-    goal_spd_rt = -param[drive_mode].vel;    
-  }
-  else {
-    goal_spd_lt = 0;
-    goal_spd_rt = 0;     
-  }
-  
- 
-} // set_goal_speed()
-
-
 // debug code for showing joystick inputs
 void show_joystick_inputs() {
   if(jscmd.up) Serial.print("UP ");
@@ -177,7 +217,7 @@ void show_joystick_inputs() {
   if(jscmd.b4) Serial.print("B4 ");
   if(jscmd.st) Serial.print("ST ");
   if(jscmd.se) Serial.print("SE ");
-//  Serial.print(jscmd_cnt, DEC);
+  //  Serial.print(jscmd_cnt, DEC);
   Serial.println();   
 } // show_joystick_inputs()
 
@@ -211,4 +251,3 @@ void parse_xbee_byte() {
     jscmd.dn = (xb & B01000000);    
   }
 } // parse_xbee_byte()
-

@@ -21,14 +21,14 @@ void getDanger(){
           buttonStateFront_L = digitalRead(BUTTON_PIN_FRONT_L);
           buttonStateBack_L = digitalRead(BUTTON_PIN_BACK_L);         
 
-          if (buttonStateFront_R == HIGH || buttonStateFront_L == HIGH){
+          if (buttonStateFront_R == LOW || buttonStateFront_L == LOW){
             dangerFront = true;
           }
           else {
             dangerFront = false;
           }
     
-          if (buttonStateBack_R == HIGH  || buttonStateBack_L == HIGH){
+          if (buttonStateBack_R == LOW  || buttonStateBack_L == LOW){
             dangerBack = true;
           }
 

@@ -38,19 +38,19 @@ void driveMotors() {
       roboclaw2.BackwardM2(address,0); //Stop Motor2      
     }
   } // drive_motors(0)
-  else if (mode==MODE_ARM) {
-
-    if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
-      if(arm_cur_spd_m1 != 0 || arm_cur_spd_m2 != 0 || arm_cur_spd_m3 != 0 || arm_cur_spd_m4 != 0 || arm_cur_spd_m5 != 0 || arm_cur_spd_m6 != 0) {
-        roboclaw1.SpeedM1(address,arm_cur_spd_m1);
-        roboclaw1.SpeedM2(address,arm_cur_spd_m2);
-        roboclaw2.SpeedM1(address,arm_cur_spd_m3);
-        roboclaw2.SpeedM2(address,arm_cur_spd_m4); 
-        roboclaw3.SpeedM1(address,arm_cur_spd_m5);
-        roboclaw3.SpeedM2(address,arm_cur_spd_m6);
-      }   // drive_motors (1)
-    } 
-  }
+//  else if (mode==MODE_ARM) {
+//
+//    if(batteryOK && mc1_batt>1 && mc2_batt>1 && mc3_batt>1) {  // IF ALL OK... 
+//      if(arm_cur_spd_m1 != 0 || arm_cur_spd_m2 != 0 || arm_cur_spd_m3 != 0 || arm_cur_spd_m4 != 0 || arm_cur_spd_m5 != 0 || arm_cur_spd_m6 != 0) {
+//        roboclaw1.SpeedM1(address,arm_cur_spd_m1);
+//        roboclaw1.SpeedM2(address,arm_cur_spd_m2);
+//        roboclaw2.SpeedM1(address,arm_cur_spd_m3);
+//        roboclaw2.SpeedM2(address,arm_cur_spd_m4); 
+//        roboclaw3.SpeedM1(address,arm_cur_spd_m5);
+//        roboclaw3.SpeedM2(address,arm_cur_spd_m6);
+//      }   // drive_motors (1)
+//    } 
+//  }
 }
 
 // get roboclaw's battery levels

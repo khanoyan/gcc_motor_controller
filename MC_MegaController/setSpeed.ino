@@ -16,7 +16,7 @@ void setSpeed(){
   int goal_thr = param[drive_mode].thr;
   int goal_ramp = param[drive_mode].ramp;
 
-  if(eStop) { 
+  if(dangerFront || dangerBack) { 
     rover_goal_spd_lt = 0;
     rover_goal_spd_rt = 0;
     rover_cur_spd_lt = 0;
@@ -39,12 +39,11 @@ void setSpeed(){
 
   else {
     //************************Joystick *******************************
-    if(XBEE_ON == true){
+    if(xbee_on){
 
       //*********************Rover Joystick ***************************
       if (mode == MODE_ROVER){
         //are we checking which joystick commands are triggered
-        
         if( !( (rover_goal_spd_lt-goal_thr < rover_cur_spd_lt) && (rover_goal_spd_lt+goal_ramp > rover_cur_spd_lt) ) ) {  
           if(rover_cur_spd_lt < rover_goal_spd_lt) {
             rover_cur_spd_lt += goal_ramp;
@@ -62,9 +61,6 @@ void setSpeed(){
             rover_cur_spd_rt -= goal_ramp;
           }      
         }
-
-
-        
       }
       // ********************* Arm Mode Joystick**********************
       else if (mode == MODE_ARM){
@@ -139,7 +135,7 @@ void setSpeed(){
   //************************End of Arm Mode****************************
 
   //************************Rover Mode with THING************************  
-    else if(XBEE_ON == false)     // if thing is not alive and THING comes in
+    else if(!xbee_on && thing_on)     // if thing is not alive and THING comes in
     { 
       drive_mode = SLOW;   // drive mode for arm and rover should be slow 
       if (mode == MODE_ROVER){

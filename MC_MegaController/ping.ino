@@ -1,2 +1,3 @@
-void ping(){}
+void ping(){
+	
 }
