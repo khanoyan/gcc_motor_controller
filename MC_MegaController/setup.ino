@@ -5,9 +5,13 @@ void setup() {
   XBee.begin(9600);
   Serial.begin(57600);
 
+  //For Thing on Web Control
+  Serial1.begin(115200);
+
+
   //Open roboclaw serial ports
-  roboclawL.begin(38400);
-  roboclawR.begin(38400);
+  roboclaw1.begin(38400);
+  roboclaw2.begin(38400);
 
   jscmd.linkActive = true; // override this value until we check for it
   jscmd.up = false;
@@ -26,18 +30,18 @@ void setup() {
   jscmd.se = false;
 
   // populate drive param 
-  param[SLOW].vel       = VEL_SLOW;
-  param[SLOW].ramp      = RAMP_RATE_SLOW;
-  param[SLOW].thr       = THR_SLOW;
+  param[SLOW].vel       = ROVER_VEL_SLOW;
+  param[SLOW].ramp      = ROVER_RAMP_RATE_SLOW;
+  param[SLOW].thr       = ROVER_THR_SLOW;
   param[SLOW].diag      = DIAG_OFFSET_SLOW;
-  param[FAST].vel       = VEL_FAST;
-  param[FAST].ramp      = RAMP_RATE_FAST;
-  param[FAST].thr       = THR_FAST;
+  param[FAST].vel       = ROVER_VEL_FAST;
+  param[FAST].ramp      = ROVER_RAMP_RATE_FAST;
+  param[FAST].thr       = ROVER_THR_FAST;
   param[FAST].diag      = DIAG_OFFSET_FAST;  
-  param[LUDICROUS].vel  = VEL_LUDICROUS;
-  param[LUDICROUS].ramp = RAMP_RATE_LUDICROUS;
-  param[LUDICROUS].thr  = THR_LUDICROUS;
-  param[LUDICROUS].diag = DIAG_OFFSET_LUDICROUS;  
+  param[ARM].vel        = ARM_VEL;
+  param[ARM].ramp       = ARM_RAMP_RATE;
+  param[ARM].thr        = ARM_THR;
+   
 
   // connect to TM1638 module
   // display a hexadecimal number and set the left 4 dots
@@ -51,5 +55,17 @@ void setup() {
   pinMode(BIGLIGHT_PIN, OUTPUT);
   // flush XBee serial stream before we get into loop()
   XBee.flush();
-      
+
+  //set the counter to 0
+  xbee_counter=0;
+
+  //Initalizing Bumper Pins
+  pinMode(BUTTON_PIN_FRONT_R, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_FRONT_L, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_BACK_R, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_BACK_L, INPUT_PULLUP);
+
+  //get the time
+  lastTimeJSMessageRecieved = millis();
+  lastTimeThingMessageRecieved = millis();
 } // setup()
